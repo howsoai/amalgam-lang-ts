@@ -1,0 +1,31 @@
+# use glob syntax
+syntax: glob
+
+# Ignore Visual Studio files
+.vscode
+
+# User-specific files
+*.suo
+*.user
+*.sln.docstates
+.vs/
+.direnv
+.envrc
+.env
+local/
+
+# Builds
+build/
+dist/
+
+# Windows Ignores
+$RECYCLE.BIN/
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Mac Ignores
+.DS_Store
+
+# Node
+**/node_modules
