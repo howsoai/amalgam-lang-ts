@@ -1,4 +1,5 @@
-Etc/UTC# Contributing to the tz code and data
+Etc/UTC
+# Contributing to the tz code and data
 
 Please do not create issues or pull requests on GitHub, as the
 proper procedure for proposing and distributing patches is via

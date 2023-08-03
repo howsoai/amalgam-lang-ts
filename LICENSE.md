@@ -1,1 +1,1 @@
-Copyright (c) 2022-2023, Diveplane Corporation. All rights reserved.
+Copyright (c) 2022-2023, Howso Incorporated. All rights reserved.

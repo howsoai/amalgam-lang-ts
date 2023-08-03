@@ -1,15 +1,11 @@
 {
-    "name": "diveplane-amalgam-api",
+    "name": "amalgam-lang",
     "version": "0.0.1",
     "private": true,
     "type": "module",
     "license": "SEE LICENSE IN LICENSE.md",
-    "repository": {
-        "type": "git",
-        "url": "https://diveplane.visualstudio.com/dp/_git/diveplane-amalgam-api-ts"
-    },
     "author": {
-        "name": "Diveplane Corporation"
+        "name": "Howso Incorporated"
     },
     "scripts": {
         "prebuild": "rimraf ./lib",
