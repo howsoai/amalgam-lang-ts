@@ -25,6 +25,7 @@
         },
         "./worker": "./lib/worker/index.js",
         "./wasm": "./lib/wasm/index.js",
+        "./webassembly/*": "./webassembly/*",
         "./package.json": "./package.json"
     },
     "devDependencies": {

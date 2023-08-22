@@ -1,6 +1,6 @@
 import { Amalgam, AmalgamModule, AmalgamOptions } from "../api.js";
 import { AmalgamRuntimeError } from "../errors.js";
-import AmalgamRuntime from "../../webassembly/amalgam-st.cjs";
+import AmalgamRuntime from "../../webassembly/amalgam-st.js";
 
 export { AmalgamOptions } from "../api.js";
 
@@ -11,9 +11,12 @@ export interface AmalgamEmscriptenModule extends EmscriptenModule, AmalgamModule
   mainScriptUrlOrBlob: string | URL; // Used to manually set url for multithreaded workers (amalgam-mt.cjs)
 }
 
-export async function initRuntime(options?: AmalgamOptions): Promise<Amalgam<AmalgamEmscriptenModule>> {
+export async function initRuntime(
+  options?: AmalgamOptions,
+  runtimeOverrides?: Partial<AmalgamEmscriptenModule>
+): Promise<Amalgam<AmalgamEmscriptenModule>> {
   try {
-    const amlg = await AmalgamRuntime<AmalgamEmscriptenModule>();
+    const amlg = await AmalgamRuntime<AmalgamEmscriptenModule>(runtimeOverrides);
 
     // eslint-disable-next-line prettier/prettier
     amlg.loadEntity = amlg.cwrap("LoadEntity", "boolean", ["string", "string", "boolean", "boolean", "string", "string"]);

@@ -7,4 +7,4 @@ export interface AmalgamEmscriptenModule extends EmscriptenModule, AmalgamModule
     FS: typeof FS;
     mainScriptUrlOrBlob: string | URL;
 }
-export declare function initRuntime(options?: AmalgamOptions): Promise<Amalgam<AmalgamEmscriptenModule>>;
+export declare function initRuntime(options?: AmalgamOptions, runtimeOverrides?: Partial<AmalgamEmscriptenModule>): Promise<Amalgam<AmalgamEmscriptenModule>>;
