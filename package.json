@@ -1,9 +1,8 @@
 {
     "name": "@howso/amalgam-lang",
     "version": "0.0.1",
-    "private": true,
     "type": "module",
-    "license": "SEE LICENSE IN LICENSE.md",
+    "license": "AGPL-3.0-only",
     "author": {
         "name": "Howso Incorporated"
     },
@@ -13,7 +12,7 @@
         "lint": "eslint 'src/**'"
     },
     "files": [
-        "LICENSE.md",
+        "LICENSE.txt",
         "README.md",
         "lib",
         "webassembly"
