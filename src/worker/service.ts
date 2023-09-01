@@ -137,16 +137,23 @@ export class AmalgamWorkerService<T extends AmalgamModule = AmalgamModule> {
     if (this.options.debug) {
       console.error(error);
     }
+
+    let instance: AmalgamError;
+    if (error instanceof AmalgamError) {
+      instance = error;
+    } else if (error instanceof Error) {
+      instance = new AmalgamError(error.message);
+    } else {
+      instance = new AmalgamError(String(error));
+    }
+
     const msg: Response = {
       type: "response",
       command: request?.command || "",
       success: false,
-      error:
-        error instanceof AmalgamError
-          ? error
-          : error instanceof Error
-          ? new AmalgamError(error.message)
-          : new AmalgamError(String(error)),
+      // Include serialized form since we cannot transfer custom error class across boundary
+      body: instance.serialize(),
+      error: instance,
     };
     channel.postMessage(msg);
   }

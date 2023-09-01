@@ -5,11 +5,16 @@ export class AmalgamError extends Error {
     super(message);
     this.code = code;
     // Set the prototype explicitly
-    Object.setPrototypeOf(this, AmalgamError.prototype);
+    Object.setPrototypeOf(this, new.target.prototype);
+    this.name = "AmalgamError";
   }
 
   get detail(): string {
     return this.message;
+  }
+
+  serialize() {
+    return { detail: this.detail, code: this.code, name: this.name };
   }
 }
 
@@ -17,7 +22,8 @@ export class AmalgamRuntimeError extends AmalgamError {
   constructor(message?: string, code?: string) {
     super(message, code);
     // Set the prototype explicitly
-    Object.setPrototypeOf(this, AmalgamRuntimeError.prototype);
+    Object.setPrototypeOf(this, new.target.prototype);
+    this.name = "AmalgamRuntimeError";
   }
 }
 
@@ -25,6 +31,7 @@ export class AmalgamCoreError extends AmalgamError {
   constructor(message?: string, code?: string) {
     super(message, code);
     // Set the prototype explicitly
-    Object.setPrototypeOf(this, AmalgamCoreError.prototype);
+    Object.setPrototypeOf(this, new.target.prototype);
+    this.name = "AmalgamCoreError";
   }
 }
