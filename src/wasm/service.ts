@@ -6,7 +6,7 @@ export class AmalgamWasmService extends AmalgamWorkerService<AmalgamEmscriptenMo
   protected async handle(
     amlg: Amalgam<AmalgamEmscriptenModule>,
     request: Request,
-    channel: MessagePort
+    channel: MessagePort,
   ): Promise<void> {
     if (isFileSystemRequest(request?.command)) {
       const { command, parameters = [] } = request;

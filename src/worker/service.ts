@@ -26,14 +26,14 @@ export type AmalgamCommand = "initialize" | AmalgamOperation | string;
 export type AmalgamRequestParameters<T extends AmalgamCommand> = T extends AmalgamOperation
   ? Parameters<Amalgam[T]>
   : T extends "initialize"
-  ? [options?: AmalgamOptions]
-  : [];
+    ? [options?: AmalgamOptions]
+    : [];
 
 export type AmalgamResponseBody<T extends AmalgamCommand> = T extends AmalgamOperation
   ? ReturnType<Amalgam[T]>
   : T extends "initialize"
-  ? boolean
-  : void;
+    ? boolean
+    : void;
 
 export interface AmalgamRequest<T extends AmalgamCommand = AmalgamCommand> extends Request {
   command: T;
@@ -92,7 +92,7 @@ export class AmalgamWorkerService<T extends AmalgamModule = AmalgamModule> {
 
   constructor(
     protected readonly initializer: (options?: AmalgamOptions) => Promise<Amalgam<T>>,
-    protected readonly options: AmalgamWorkerServiceOptions = {}
+    protected readonly options: AmalgamWorkerServiceOptions = {},
   ) {}
 
   /**

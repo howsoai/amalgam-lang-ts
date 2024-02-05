@@ -13,7 +13,7 @@ export interface AmalgamEmscriptenModule extends EmscriptenModule, AmalgamModule
 
 export async function initRuntime(
   options?: AmalgamOptions,
-  runtimeOverrides?: Partial<AmalgamEmscriptenModule>
+  runtimeOverrides?: Partial<AmalgamEmscriptenModule>,
 ): Promise<Amalgam<AmalgamEmscriptenModule>> {
   try {
     const amlg = await AmalgamRuntime<AmalgamEmscriptenModule>(runtimeOverrides);

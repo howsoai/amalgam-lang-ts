@@ -9,7 +9,7 @@ export interface AmalgamModule {
     persistent: boolean,
     loadContainedEntities: boolean,
     writeLog: string,
-    printLog: string
+    printLog: string,
   ): boolean;
   storeEntity(handle: string, uri: string, updatePersistenceLocation?: boolean, storeContainedEntities?: boolean): void;
   executeEntity(handle: string, label: string): void;
@@ -40,7 +40,10 @@ export interface AmalgamCoreResponse<R = unknown> {
 export class Amalgam<T extends AmalgamModule = AmalgamModule> {
   private readonly trace: AmalgamTrace;
 
-  constructor(readonly runtime: T, readonly options: AmalgamOptions = {}) {
+  constructor(
+    readonly runtime: T,
+    readonly options: AmalgamOptions = {},
+  ) {
     const { sbfDatastoreEnabled = true, trace = false } = options;
     if (trace == null || typeof trace === "boolean") {
       this.trace = new AmalgamTrace(trace);
@@ -62,7 +65,7 @@ export class Amalgam<T extends AmalgamModule = AmalgamModule> {
     persistent = false,
     loadContainedEntities = false,
     writeLog = "",
-    printLog = ""
+    printLog = "",
   ): boolean {
     this.trace.log_command("LOAD_ENTITY", handle, uri, persistent, loadContainedEntities, writeLog, printLog);
     const result = this.runtime.loadEntity(handle, uri, persistent, loadContainedEntities, writeLog, printLog);
@@ -74,7 +77,7 @@ export class Amalgam<T extends AmalgamModule = AmalgamModule> {
     handle: string,
     uri: string,
     updatePersistenceLocation = false,
-    storeContainedEntities = true
+    storeContainedEntities = true,
   ): void {
     this.trace.log_comment("CALL > StoreEntity");
     this.runtime.storeEntity(handle, uri, updatePersistenceLocation, storeContainedEntities);

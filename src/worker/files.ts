@@ -27,8 +27,8 @@ export type FileSystemRequestParameters<T extends FileSystemOperation> = Paramet
 export type FileSystemResponseBody<T extends FileSystemOperation> = T extends "readFile"
   ? Uint8Array | string
   : T extends "readdir"
-  ? string[]
-  : void;
+    ? string[]
+    : void;
 
 export interface FileSystemRequest<T extends FileSystemOperation = FileSystemOperation> extends Request {
   command: T;
