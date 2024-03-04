@@ -1,12 +1,10 @@
-import { AmalgamCoreError } from "./errors.js";
-import { AmalgamTrace } from "./trace.js";
-import { AmalgamCoreWarning } from "./warnings.js";
+import { AmalgamTrace } from "./trace";
 export interface AmalgamModule {
     loadEntity(handle: string, uri: string, persistent: boolean, loadContainedEntities: boolean, writeLog: string, printLog: string): boolean;
     storeEntity(handle: string, uri: string, updatePersistenceLocation?: boolean, storeContainedEntities?: boolean): void;
     executeEntity(handle: string, label: string): void;
     executeEntityJson(handle: string, label: string, json: string): string;
-    deleteEntity(handle: string): void;
+    destroyEntity(handle: string): void;
     getEntities(): string[];
     setRandomSeed(handle: string, seed: string): boolean;
     setJsonToLabel(handle: string, label: string, json: string): void;
@@ -16,15 +14,11 @@ export interface AmalgamModule {
     getVersion(): string;
     setMaxNumThreads(threads: number): void;
     getMaxNumThreads(): number;
+    getConcurrencyType(): string;
 }
 export interface AmalgamOptions {
     trace?: boolean | AmalgamTrace;
     sbfDatastoreEnabled?: boolean;
-}
-export interface AmalgamCoreResponse<R = unknown> {
-    content: R;
-    errors: AmalgamCoreError[];
-    warnings: AmalgamCoreWarning[];
 }
 export declare class Amalgam<T extends AmalgamModule = AmalgamModule> {
     readonly runtime: T;
@@ -35,9 +29,8 @@ export declare class Amalgam<T extends AmalgamModule = AmalgamModule> {
     loadEntity(handle: string, uri: string, persistent?: boolean, loadContainedEntities?: boolean, writeLog?: string, printLog?: string): boolean;
     storeEntity(handle: string, uri: string, updatePersistenceLocation?: boolean, storeContainedEntities?: boolean): void;
     executeEntity(handle: string, label: string): void;
-    executeEntityJson<D = unknown, R = unknown>(handle: string, label: string, data: D): AmalgamCoreResponse<R>;
-    executeEntityJsonRaw(handle: string, label: string, payload: string): string;
-    deleteEntity(handle: string): void;
+    executeEntityJson<D = unknown, R = unknown>(handle: string, label: string, data: D): R | null;
+    destroyEntity(handle: string): void;
     getEntities(): string[];
     setRandomSeed(handle: string, seed: string): boolean;
     setJsonToLabel<D = unknown>(handle: string, label: string, data: D): void;
@@ -46,6 +39,5 @@ export declare class Amalgam<T extends AmalgamModule = AmalgamModule> {
     isSBFDatastoreEnabled(): boolean;
     setMaxNumThreads(threads: number): void;
     getMaxNumThreads(): number;
-    protected serialize<D = unknown>(payload: D): string;
-    protected deserialize<R = unknown>(payload: string | null): AmalgamCoreResponse<R>;
+    getConcurrencyType(): string;
 }

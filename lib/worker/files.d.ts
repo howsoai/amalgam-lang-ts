@@ -1,4 +1,4 @@
-import { Request, Response } from "./messages.js";
+import type { Request, Response } from "./messages";
 export interface IFileSystem {
     createLazyFile(parent: string, name: string, url: string, canRead?: boolean, canWrite?: boolean): Promise<void>;
     writeFile(path: string, data: string | DataView): Promise<void>;

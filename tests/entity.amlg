@@ -1,0 +1,18 @@
+;Simple Amalgam entity to use in unit tests
+(null
+	#test_number 1
+	#test_string "abc123"
+	#test_list
+		(list 	1 	.7  "A")
+	#echo
+		(declare
+			;input params
+			(assoc
+				foo "bar"
+			)
+			;reply with input
+			(assoc
+				"foo" foo
+			)
+		)
+)

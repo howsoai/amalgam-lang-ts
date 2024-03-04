@@ -1,9 +1,13 @@
 /// <reference types="emscripten" />
-import { Amalgam, AmalgamModule, AmalgamOptions } from "../api.js";
-export { AmalgamOptions } from "../api.js";
+import { Amalgam, type AmalgamModule, type AmalgamOptions } from "../api";
+export type { AmalgamOptions } from "../api";
 export interface AmalgamEmscriptenModule extends EmscriptenModule, AmalgamModule {
     cwrap: typeof cwrap;
     ccall: typeof ccall;
+    UTF8ToString: typeof UTF8ToString;
+    getValue: typeof getValue;
+    setValue: typeof setValue;
+    pointerToString: (ptr: number | bigint) => string;
     FS: typeof FS;
     mainScriptUrlOrBlob: string | URL;
 }

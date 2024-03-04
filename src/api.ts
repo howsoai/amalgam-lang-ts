@@ -1,6 +1,4 @@
-import { AmalgamError, AmalgamCoreError } from "./errors.js";
-import { AmalgamTrace } from "./trace.js";
-import { AmalgamCoreWarning } from "./warnings.js";
+import { AmalgamTrace } from "./trace";
 
 export interface AmalgamModule {
   loadEntity(
@@ -14,7 +12,7 @@ export interface AmalgamModule {
   storeEntity(handle: string, uri: string, updatePersistenceLocation?: boolean, storeContainedEntities?: boolean): void;
   executeEntity(handle: string, label: string): void;
   executeEntityJson(handle: string, label: string, json: string): string;
-  deleteEntity(handle: string): void;
+  destroyEntity(handle: string): void;
   getEntities(): string[];
   setRandomSeed(handle: string, seed: string): boolean;
   setJsonToLabel(handle: string, label: string, json: string): void;
@@ -24,17 +22,12 @@ export interface AmalgamModule {
   getVersion(): string;
   setMaxNumThreads(threads: number): void;
   getMaxNumThreads(): number;
+  getConcurrencyType(): string;
 }
 
 export interface AmalgamOptions {
   trace?: boolean | AmalgamTrace;
   sbfDatastoreEnabled?: boolean;
-}
-
-export interface AmalgamCoreResponse<R = unknown> {
-  content: R;
-  errors: AmalgamCoreError[];
-  warnings: AmalgamCoreWarning[];
 }
 
 export class Amalgam<T extends AmalgamModule = AmalgamModule> {
@@ -88,24 +81,20 @@ export class Amalgam<T extends AmalgamModule = AmalgamModule> {
     this.runtime.executeEntity(handle, label);
   }
 
-  public executeEntityJson<D = unknown, R = unknown>(handle: string, label: string, data: D): AmalgamCoreResponse<R> {
-    const payload = this.serialize<D>(data);
-    const result = this.executeEntityJsonRaw(handle, label, payload);
-    return this.deserialize<R>(result);
-  }
-
-  public executeEntityJsonRaw(handle: string, label: string, payload: string): string {
+  public executeEntityJson<D = unknown, R = unknown>(handle: string, label: string, data: D): R | null {
+    const payload = JSON.stringify(data ?? null);
     this.trace.log_time("EXECUTION START");
     this.trace.log_command("EXECUTE_ENTITY_JSON", handle, label, payload);
     const result = this.runtime.executeEntityJson(handle, label, payload);
     this.trace.log_time("EXECUTION STOP");
     this.trace.log_reply(result);
-    return result;
+    if (!result) return null;
+    return JSON.parse(result);
   }
 
-  public deleteEntity(handle: string): void {
-    this.trace.log_comment("CALL > DeleteEntity");
-    this.runtime.deleteEntity(handle);
+  public destroyEntity(handle: string): void {
+    this.trace.log_comment("CALL > DestroyEntity");
+    this.runtime.destroyEntity(handle);
   }
 
   public getEntities(): string[] {
@@ -121,7 +110,7 @@ export class Amalgam<T extends AmalgamModule = AmalgamModule> {
   }
 
   public setJsonToLabel<D = unknown>(handle: string, label: string, data: D): void {
-    const payload = this.serialize<D>(data);
+    const payload = JSON.stringify(data ?? null);
     this.trace.log_command("SET_JSON_TO_LABEL", handle, label, payload);
     this.runtime.setJsonToLabel(handle, label, payload);
   }
@@ -147,74 +136,10 @@ export class Amalgam<T extends AmalgamModule = AmalgamModule> {
   }
 
   public getMaxNumThreads(): number {
-    return this.runtime.getMaxNumThreads();
+    return Number(this.runtime.getMaxNumThreads());
   }
 
-  /**
-   * Serialize a core request.
-   * @param payload The core payload to serialize.
-   * @returns The core payload as JSON.
-   */
-  protected serialize<D = unknown>(payload: D): string {
-    if (!payload) {
-      return JSON.stringify({});
-    }
-
-    // Remove null properties from payload
-    const filtered = { ...payload };
-    for (const key in filtered) {
-      if (filtered[key] == null) {
-        delete filtered[key];
-      }
-    }
-
-    return JSON.stringify(filtered);
-  }
-
-  /**
-   * Deserialize a core response.
-   * @param payload The core JSON payload to deserialize.
-   * @returns The deserialized value.
-   */
-  protected deserialize<R = unknown>(payload: string | null): AmalgamCoreResponse<R> {
-    if (!payload) {
-      throw new AmalgamError("Null or empty response received from core.");
-    }
-
-    const deserialized_payload = JSON.parse(payload);
-
-    if (deserialized_payload?.constructor == Object) {
-      const errors: AmalgamCoreError[] = [];
-      const warnings: AmalgamCoreWarning[] = [];
-
-      // Collect warnings
-      if (deserialized_payload.warnings?.length > 0) {
-        for (const w of deserialized_payload.warnings) {
-          warnings.push(new AmalgamCoreWarning(w?.detail, w?.code));
-        }
-      }
-
-      // Collect errors
-      if (deserialized_payload.status !== "ok") {
-        if (deserialized_payload.errors?.length > 0) {
-          for (const e of deserialized_payload.errors) {
-            errors.push(new AmalgamCoreError(e?.detail, e?.code));
-          }
-        } else {
-          errors.push(new AmalgamCoreError("An unknown error occurred."));
-        }
-        return { errors, warnings, content: deserialized_payload.payload };
-      }
-
-      return {
-        errors,
-        warnings,
-        content: deserialized_payload.payload,
-      };
-    } else if (["string", "number", "bigint", "boolean"].indexOf(typeof deserialized_payload) != -1) {
-      return { errors: [], warnings: [], content: deserialized_payload };
-    }
-
-    throw new AmalgamError("Malformed response received from core.");
+  public getConcurrencyType(): string {
+    return this.runtime.getConcurrencyType();
   }
 }

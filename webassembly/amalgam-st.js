@@ -3437,8 +3437,17 @@ export const AmalgamRuntime = (() => {
     var ___wasm_call_ctors = function() {
       return (___wasm_call_ctors = Module["asm"]["__wasm_call_ctors"]).apply(null, arguments);
     };
+    var ___errno_location = function() {
+      return (___errno_location = Module["asm"]["__errno_location"]).apply(null, arguments);
+    };
     var _LoadEntity = Module["_LoadEntity"] = function() {
       return (_LoadEntity = Module["_LoadEntity"] = Module["asm"]["LoadEntity"]).apply(null, arguments);
+    };
+    var _LoadEntityLegacy = Module["_LoadEntityLegacy"] = function() {
+      return (_LoadEntityLegacy = Module["_LoadEntityLegacy"] = Module["asm"]["LoadEntityLegacy"]).apply(null, arguments);
+    };
+    var _VerifyEntity = Module["_VerifyEntity"] = function() {
+      return (_VerifyEntity = Module["_VerifyEntity"] = Module["asm"]["VerifyEntity"]).apply(null, arguments);
     };
     var _StoreEntity = Module["_StoreEntity"] = function() {
       return (_StoreEntity = Module["_StoreEntity"] = Module["asm"]["StoreEntity"]).apply(null, arguments);
@@ -3452,20 +3461,26 @@ export const AmalgamRuntime = (() => {
     var _GetVersionString = Module["_GetVersionString"] = function() {
       return (_GetVersionString = Module["_GetVersionString"] = Module["asm"]["GetVersionString"]).apply(null, arguments);
     };
+    var _GetConcurrencyTypeString = Module["_GetConcurrencyTypeString"] = function() {
+      return (_GetConcurrencyTypeString = Module["_GetConcurrencyTypeString"] = Module["asm"]["GetConcurrencyTypeString"]).apply(null, arguments);
+    };
     var _ExecuteEntityJsonPtr = Module["_ExecuteEntityJsonPtr"] = function() {
       return (_ExecuteEntityJsonPtr = Module["_ExecuteEntityJsonPtr"] = Module["asm"]["ExecuteEntityJsonPtr"]).apply(null, arguments);
     };
     var _ExecuteEntity = Module["_ExecuteEntity"] = function() {
       return (_ExecuteEntity = Module["_ExecuteEntity"] = Module["asm"]["ExecuteEntity"]).apply(null, arguments);
     };
-    var _DeleteEntity = Module["_DeleteEntity"] = function() {
-      return (_DeleteEntity = Module["_DeleteEntity"] = Module["asm"]["DeleteEntity"]).apply(null, arguments);
+    var _DestroyEntity = Module["_DestroyEntity"] = function() {
+      return (_DestroyEntity = Module["_DestroyEntity"] = Module["asm"]["DestroyEntity"]).apply(null, arguments);
     };
     var _SetRandomSeed = Module["_SetRandomSeed"] = function() {
       return (_SetRandomSeed = Module["_SetRandomSeed"] = Module["asm"]["SetRandomSeed"]).apply(null, arguments);
     };
     var _GetEntities = Module["_GetEntities"] = function() {
       return (_GetEntities = Module["_GetEntities"] = Module["asm"]["GetEntities"]).apply(null, arguments);
+    };
+    var _DeleteString = Module["_DeleteString"] = function() {
+      return (_DeleteString = Module["_DeleteString"] = Module["asm"]["DeleteString"]).apply(null, arguments);
     };
     var _SetSBFDataStoreEnabled = Module["_SetSBFDataStoreEnabled"] = function() {
       return (_SetSBFDataStoreEnabled = Module["_SetSBFDataStoreEnabled"] = Module["asm"]["SetSBFDataStoreEnabled"]).apply(null, arguments);
@@ -3478,9 +3493,6 @@ export const AmalgamRuntime = (() => {
     };
     var _SetMaxNumThreads = Module["_SetMaxNumThreads"] = function() {
       return (_SetMaxNumThreads = Module["_SetMaxNumThreads"] = Module["asm"]["SetMaxNumThreads"]).apply(null, arguments);
-    };
-    var ___errno_location = function() {
-      return (___errno_location = Module["asm"]["__errno_location"]).apply(null, arguments);
     };
     var _free = Module["_free"] = function() {
       return (_free = Module["_free"] = Module["asm"]["free"]).apply(null, arguments);
@@ -3526,6 +3538,7 @@ export const AmalgamRuntime = (() => {
       exports2["__cxa_is_pointer_type"] = wasm64Wrapper__p(exports2["__cxa_is_pointer_type"]);
       return exports2;
     }
+    Module["UTF8ToString"] = UTF8ToString;
     Module["addRunDependency"] = addRunDependency;
     Module["removeRunDependency"] = removeRunDependency;
     Module["FS_createPath"] = FS.createPath;

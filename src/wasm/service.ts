@@ -1,6 +1,6 @@
-import type { Amalgam } from "../api.js";
-import type { AmalgamEmscriptenModule } from "./runtime.js";
-import { AmalgamWorkerService, Request, isFileSystemRequest } from "../worker/index.js";
+import type { Amalgam } from "../api";
+import type { AmalgamEmscriptenModule } from "./runtime";
+import { AmalgamWorkerService, isFileSystemRequest, type Request } from "../worker/index";
 
 export class AmalgamWasmService extends AmalgamWorkerService<AmalgamEmscriptenModule> {
   protected async handle(

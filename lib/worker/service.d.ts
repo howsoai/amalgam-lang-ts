@@ -1,7 +1,6 @@
-import { Amalgam, AmalgamModule, AmalgamCoreResponse, AmalgamOptions } from "../api.js";
-import { MessageEventLike, ProtocolMessage, Request, Response } from "./messages.js";
-export { AmalgamCoreResponse };
-export type AmalgamOperation = "loadEntity" | "storeEntity" | "executeEntity" | "executeEntityJson" | "deleteEntity" | "getEntities" | "setRandomSeed" | "setJsonToLabel" | "getJsonFromLabel" | "setSBFDatastoreEnabled" | "isSBFDatastoreEnabled" | "getVersion" | "setMaxNumThreads" | "getMaxNumThreads";
+import { Amalgam, AmalgamModule, type AmalgamOptions } from "../api";
+import { MessageEventLike, ProtocolMessage, Request, Response } from "./messages";
+export type AmalgamOperation = "loadEntity" | "storeEntity" | "executeEntity" | "executeEntityJson" | "destroyEntity" | "getEntities" | "setRandomSeed" | "setJsonToLabel" | "getJsonFromLabel" | "setSBFDatastoreEnabled" | "isSBFDatastoreEnabled" | "getVersion" | "setMaxNumThreads" | "getMaxNumThreads" | "getConcurrencyType";
 export type AmalgamCommand = "initialize" | AmalgamOperation | string;
 export type AmalgamRequestParameters<T extends AmalgamCommand> = T extends AmalgamOperation ? Parameters<Amalgam[T]> : T extends "initialize" ? [options?: AmalgamOptions] : [];
 export type AmalgamResponseBody<T extends AmalgamCommand> = T extends AmalgamOperation ? ReturnType<Amalgam[T]> : T extends "initialize" ? boolean : void;
@@ -14,7 +13,7 @@ export interface AmalgamResponse<T extends AmalgamCommand = AmalgamCommand> exte
     body: AmalgamResponseBody<T>;
 }
 export interface ExecuteEntityJsonResponse<R = unknown> extends AmalgamResponse<"executeEntityJson"> {
-    body: AmalgamCoreResponse<R>;
+    body: R | null;
 }
 export interface JsonFromLabelResponse<R = unknown> extends AmalgamResponse<"getJsonFromLabel"> {
     body: R | null;

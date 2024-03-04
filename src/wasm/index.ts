@@ -1,3 +1,3 @@
-export * from "./runtime.js";
-export * from "./service.js";
-export * from "./util.js";
+export * from "./runtime";
+export * from "./service";
+export * from "./util";

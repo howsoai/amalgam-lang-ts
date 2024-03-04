@@ -26,12 +26,3 @@ export class AmalgamRuntimeError extends AmalgamError {
     this.name = "AmalgamRuntimeError";
   }
 }
-
-export class AmalgamCoreError extends AmalgamError {
-  constructor(message?: string, code?: string) {
-    super(message, code);
-    // Set the prototype explicitly
-    Object.setPrototypeOf(this, new.target.prototype);
-    this.name = "AmalgamCoreError";
-  }
-}

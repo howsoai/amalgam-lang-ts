@@ -1,16 +1,14 @@
 /* eslint-disable @typescript-eslint/no-empty-interface */
-import { Amalgam, AmalgamModule, AmalgamCoreResponse, AmalgamOptions } from "../api.js";
-import { AmalgamError } from "../errors.js";
-import { isRequest, MessageEventLike, ProtocolMessage, Request, Response } from "./messages.js";
-
-export { AmalgamCoreResponse };
+import { Amalgam, AmalgamModule, type AmalgamOptions } from "../api";
+import { AmalgamError } from "../errors";
+import { isRequest, MessageEventLike, ProtocolMessage, Request, Response } from "./messages";
 
 export type AmalgamOperation =
   | "loadEntity"
   | "storeEntity"
   | "executeEntity"
   | "executeEntityJson"
-  | "deleteEntity"
+  | "destroyEntity"
   | "getEntities"
   | "setRandomSeed"
   | "setJsonToLabel"
@@ -19,7 +17,8 @@ export type AmalgamOperation =
   | "isSBFDatastoreEnabled"
   | "getVersion"
   | "setMaxNumThreads"
-  | "getMaxNumThreads";
+  | "getMaxNumThreads"
+  | "getConcurrencyType";
 
 export type AmalgamCommand = "initialize" | AmalgamOperation | string;
 
@@ -48,7 +47,7 @@ export interface AmalgamResponse<T extends AmalgamCommand = AmalgamCommand> exte
 /* Typed Responses */
 
 export interface ExecuteEntityJsonResponse<R = unknown> extends AmalgamResponse<"executeEntityJson"> {
-  body: AmalgamCoreResponse<R>;
+  body: R | null;
 }
 
 export interface JsonFromLabelResponse<R = unknown> extends AmalgamResponse<"getJsonFromLabel"> {
@@ -66,7 +65,7 @@ export function isAmalgamOperation(command: string): command is AmalgamOperation
     case "storeEntity":
     case "executeEntity":
     case "executeEntityJson":
-    case "deleteEntity":
+    case "destroyEntity":
     case "getEntities":
     case "setRandomSeed":
     case "setJsonToLabel":
@@ -76,6 +75,7 @@ export function isAmalgamOperation(command: string): command is AmalgamOperation
     case "getVersion":
     case "setMaxNumThreads":
     case "getMaxNumThreads":
+    case "getConcurrencyType":
       return true;
     default:
       return false;

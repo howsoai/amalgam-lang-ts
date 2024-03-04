@@ -11,6 +11,3 @@ export declare class AmalgamError extends Error {
 export declare class AmalgamRuntimeError extends AmalgamError {
     constructor(message?: string, code?: string);
 }
-export declare class AmalgamCoreError extends AmalgamError {
-    constructor(message?: string, code?: string);
-}
