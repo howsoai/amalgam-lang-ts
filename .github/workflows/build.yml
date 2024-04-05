@@ -1,0 +1,90 @@
+name: Build
+run-name: "Branch Build (${{ github.run_attempt }}.${{ github.run_number }}) - ${{ github.ref_name }}"
+
+on:
+  workflow_dispatch:
+  workflow_call:
+    inputs:
+      build-type:
+        required: false
+        type: string
+      optional-release-tag:
+        required: false
+        type: string
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  metadata:
+    uses: howsoai/.github/.github/workflows/set-metadata.yml@main
+    secrets: inherit
+    with:
+      build-type: ${{ inputs.build-type }}
+      optional-release-tag: ${{ inputs.optional-release-tag }}
+
+  npm-test:
+    # Regression testing
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # - name: Install dependencies
+      #   run: npm ci
+
+      # - name: Test
+      #   run: npm run test
+
+  release:
+    needs:
+      - metadata
+      - npm-test
+    if: inputs.build-type == 'release'
+    environment:
+      name: Artifactory
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    env:
+      NODE_AUTH_TOKEN: ${{ secrets.JFROG_ACCESS_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "21.x"
+          registry-url: ${{ secrets.JFROG_URL }}/artifactory/npm-remote
+
+      - name: Set package version
+        run: |
+          sed -i "s|\"version\": \"0.0.0\"|\"version\": \"${{ needs.metadata.outputs.version }}\"|g" ./package.json
+
+      - name: Build and publish Node package
+        run: |
+          npm ci
+          npm run build
+          # Remove .npmrc so that we can easily change registries to npm-edge (for publishing)
+          rm -f .npmrc
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "21.x"
+          registry-url: ${{ secrets.JFROG_URL }}/artifactory/api/npm/npm-edge/
+
+      - name: Publish Node package
+        run: |
+          npm publish
+
+      - name: Create Release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ needs.metadata.outputs.version }}
+          commit: ${{ github.sha }}
+          name: "${{ github.event.repository.name }} ${{ needs.metadata.outputs.version }}"
+          artifactErrorsFailBuild: true
+          generateReleaseNotes: true
+          makeLatest: legacy
