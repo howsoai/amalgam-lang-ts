@@ -15,8 +15,7 @@ syntax: glob
 local/
 
 # Builds
-build/
-dist/
+/lib
 
 # Windows Ignores
 $RECYCLE.BIN/
