@@ -15,6 +15,10 @@ npm i @howso/amalgam-lang
 Anytime a new release is created in [@howso/amalgam](https://github.com/howsoai/amalgam) package's
 `amalgam-st.wasm` file should be synced to the `webassembly` directory and the `version.json` updated.
 
+### Update the interfaces
+
+In most releases the Amalgam language's interfaces will not change. When it does, update the other files.
+
 ## Publishing
 
 Actions are available through GitHub.
