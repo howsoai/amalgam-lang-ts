@@ -1,4 +1,5 @@
 import { AmalgamTrace } from "./trace";
+// Add cloneEntity,
 
 export interface AmalgamModule {
   loadEntity(
@@ -6,6 +7,8 @@ export interface AmalgamModule {
     uri: string,
     persistent: boolean,
     loadContainedEntities: boolean,
+    escapeFilename: boolean,
+    escapeContainedFilenames: boolean,
     writeLog: string,
     printLog: string,
   ): boolean;
@@ -57,11 +60,22 @@ export class Amalgam<T extends AmalgamModule = AmalgamModule> {
     uri: string,
     persistent = false,
     loadContainedEntities = false,
+    escapeFilename = false,
+    escapeContainedFilenames = false,
     writeLog = "",
     printLog = "",
   ): boolean {
     this.trace.log_command("LOAD_ENTITY", handle, uri, persistent, loadContainedEntities, writeLog, printLog);
-    const result = this.runtime.loadEntity(handle, uri, persistent, loadContainedEntities, writeLog, printLog);
+    const result = this.runtime.loadEntity(
+      handle,
+      uri,
+      persistent,
+      loadContainedEntities,
+      escapeFilename,
+      escapeContainedFilenames,
+      writeLog,
+      printLog,
+    );
     this.trace.log_reply(result);
     return result;
   }

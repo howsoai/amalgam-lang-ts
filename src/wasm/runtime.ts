@@ -40,7 +40,16 @@ export async function initRuntime(
       const status = amlg.ccall(
         "LoadEntityLegacy",
         "boolean",
-        ["string", "string", "boolean", "boolean", "string", "string"],
+        [
+          "string", // handle
+          "string", // amal_path
+          "boolean", // persist
+          "boolean", // load_contained
+          "boolean", // escape_filename
+          "boolean", // escape_contained_filenames
+          "string", // write_log
+          "string", // print_log
+        ],
         args,
       );
       return status;
