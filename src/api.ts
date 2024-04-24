@@ -1,5 +1,4 @@
 import { AmalgamTrace } from "./trace";
-// Add cloneEntity,
 
 export interface AmalgamModule {
   loadEntity(
