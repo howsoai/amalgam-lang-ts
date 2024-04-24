@@ -45,8 +45,6 @@ export async function initRuntime(
           "string", // amal_path
           "boolean", // persist
           "boolean", // load_contained
-          "boolean", // escape_filename
-          "boolean", // escape_contained_filenames
           "string", // write_log
           "string", // print_log
         ],
