@@ -11,7 +11,8 @@
     "build": "tsc --build",
     "lint": "tsc --noEmit && eslint 'src/**'",
     "lint:fix": "eslint --fix 'src/**'",
-    "test": "jest"
+    "test": "jest",
+    "prepack": "npm run build"
   },
   "files": [
     "LICENSE.txt",
