@@ -1,3 +1,6 @@
 {
-  "cSpell.words": ["amlg", "ccall", "cwrap", "Emscripten", "webassembly"]
+  "cSpell.words": ["amlg", "ccall", "cwrap", "Emscripten", "webassembly"],
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "explicit"
+  }
 }
