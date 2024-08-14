@@ -17,23 +17,12 @@
     "noFallthroughCasesInSwitch": true,
     "removeComments": true,
     "forceConsistentCasingInFileNames": true,
-    "lib": [
-      "DOM",
-      "ES2020",
-    ],
+    "lib": ["DOM", "ES2020"],
     "pretty": true,
-    "typeRoots": [
-      "node_modules/@types"
-    ],
+    "typeRoots": ["node_modules/@types"]
   },
-  "include": [
-    "src/**/*.ts",
-  ],
-  "exclude": [
-    "node_modules",
-    "**/*.spec.ts",
-    "**/*.test.ts",
-  ],
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "**/*.spec.ts", "**/*.test.ts"],
   "compileOnSave": true,
-  "buildOnSave": false,
+  "buildOnSave": false
 }

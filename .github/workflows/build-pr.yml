@@ -15,7 +15,6 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-
   build:
     uses: "./.github/workflows/build.yml"
     secrets: inherit
@@ -25,7 +24,7 @@ jobs:
   # This job is here to have only one final step to add for "Status Checks"
   # in GitHub, instead of adding every leaf test from 'build-test-package'
   final-check:
-    needs: ['build']
+    needs: ["build"]
     if: always() && (contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled'))
     runs-on: ubuntu-latest
     steps:
