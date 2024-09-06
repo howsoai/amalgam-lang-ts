@@ -1,3 +1,20 @@
 {
-  "cSpell.words": ["webassembly"]
+  "cSpell.words": [
+    "amlg",
+    "ATINIT",
+    "ATPOSTRUN",
+    "ATPRERUN",
+    "ccall",
+    "chrdev",
+    "cwrap",
+    "datafile",
+    "Emscripten",
+    "EXITSTATUS",
+    "HEAPF",
+    "HEAPU",
+    "mmap",
+    "msync",
+    "PTHREAD",
+    "webassembly"
+  ]
 }
