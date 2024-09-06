@@ -116,7 +116,8 @@ export async function initRuntime(
     };
 
     return new Amalgam(amlg, options);
-  } catch (e) {
-    throw new AmalgamRuntimeError("Failed to instantiate Amalgam runtime.", "1000");
+  } catch (reason) {
+    const message = reason instanceof Error ? reason.message : `${reason}`;
+    throw new AmalgamRuntimeError(`Failed to instantiate Amalgam runtime: ${message}`, "1000");
   }
 }
