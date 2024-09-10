@@ -3,7 +3,7 @@ import path from "node:path";
 import { describe, expect, test, beforeAll } from "@jest/globals";
 import { initRuntime } from "./runtime";
 
-const AMALGAM_WASM_DIR = "./webassembly/";
+const AMALGAM_WASM_DIR = "./src/webassembly/";
 const TESTS_DIR = "./tests/";
 const SEMVER_REGEX = /^(\d+\.)(\d+\.)(\d+)(.*)$/;
 
