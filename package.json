@@ -80,7 +80,7 @@
     },
     "ignorePatterns": [
       "lib/**",
-      "amalgam-st.js"
+      "src/webassembly/**"
     ],
     "env": {
       "browser": true,
