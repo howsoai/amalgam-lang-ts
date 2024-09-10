@@ -17,19 +17,11 @@
   "files": [
     "LICENSE.txt",
     "README.md",
-    "lib",
-    "webassembly"
+    "lib"
   ],
-  "main": "./lib/index.js",
-  "exports": {
-    ".": {
-      "default": "./lib/index.js"
-    },
-    "./worker": "./lib/worker/index.js",
-    "./wasm": "./lib/wasm/index.js",
-    "./webassembly/*": "./webassembly/*",
-    "./package.json": "./package.json"
-  },
+  "main": "lib/index.cjs.js",
+  "module": "lib/index.esm.js",
+  "types": "lib/index.d.ts",
   "devDependencies": {
     "@rollup/plugin-commonjs": "^26.0.1",
     "@rollup/plugin-typescript": "^11.1.6",
