@@ -1,6 +1,7 @@
 import typescript from "@rollup/plugin-typescript";
 import copy from "rollup-plugin-copy";
 import commonjs from "@rollup/plugin-commonjs";
+import terser from "@rollup/plugin-terser";
 import pkg from "./package.json" with { type: "json" };
 
 /**
@@ -18,16 +19,12 @@ export default {
     copy({
       targets: [
         {
-          src: ["LICENSE.txt", "package.json", "package-lock.json", "README.md"],
-          dest: "lib",
-        },
-        {
           src: ["src/webassembly/amalgam-st.data", "src/webassembly/amalgam-st.wasm", "src/webassembly/version.json"],
           dest: "lib",
         },
       ],
     }),
-    // terser(), // minifies generated bundles
+    terser(), // minifies generated bundles
   ],
   external: [
     ...Object.keys(pkg.dependencies || {}),

@@ -15,6 +15,9 @@
     "prepack": "npm run build"
   },
   "files": [
+    "LICENSE.txt",
+    "package.json",
+    "README.md",
     "lib"
   ],
   "main": "lib/index.cjs.js",
@@ -22,6 +25,7 @@
   "types": "lib/index.d.ts",
   "devDependencies": {
     "@rollup/plugin-commonjs": "^26.0.1",
+    "@rollup/plugin-terser": "^0.4.4",
     "@rollup/plugin-typescript": "^11.1.6",
     "@types/emscripten": "^1.39.6",
     "@types/jest": "^29.5.12",
