@@ -8,12 +8,42 @@ Provides a package around [@howso/amalgam](https://github.com/howsoai/amalgam) r
 npm i @howso/amalgam-lang
 ```
 
+We highly suggest the use of a Worker. Create one that can be handed to `@howso/engine`.
+
+`@/workers/AmalgamWorker`:
+
+```ts
+import { AmalgamWasmService, initRuntime } from "@howso/amalgam-lang";
+import wasmDataUri from "@howso/amalgam-lang/lib/amalgam-st.data?url";
+import wasmUri from "@howso/amalgam-lang/lib/amalgam-st.wasm?url";
+
+(async function () {
+  const svc = new AmalgamWasmService((options) => {
+    return initRuntime(options, {
+      locateFile: (path: string) => {
+        // Override file paths so we can use hashed version in build
+        if (path.endsWith("amalgam-st.wasm")) {
+          return wasmUri;
+        } else if (path.endsWith("amalgam-st.data")) {
+          return wasmDataUri;
+        }
+        return self.location.href + path;
+      },
+    });
+  });
+  self.onmessage = async (ev) => {
+    svc.dispatch(ev);
+  };
+  self.postMessage({ type: "event", event: "ready" });
+})();
+```
+
 ## Development
 
 ### Syncing with new Amalgam releases
 
 Anytime a new release is created in [@howso/amalgam](https://github.com/howsoai/amalgam) package's
-`amalgam-st.wasm` file should be synced to the `webassembly` directory and the `version.json` updated.
+`amalgam-st.wasm`, update the entire `src/webassembly` directory's contents.
 
 ### Update the interfaces
 

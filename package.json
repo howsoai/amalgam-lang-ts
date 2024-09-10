@@ -8,7 +8,7 @@
   },
   "scripts": {
     "prebuild": "rimraf ./lib",
-    "build": "tsc --build",
+    "build": "rollup --config",
     "lint": "tsc --noEmit && eslint 'src/**'",
     "lint:fix": "eslint --fix 'src/**'",
     "test": "jest",
@@ -16,21 +16,17 @@
   },
   "files": [
     "LICENSE.txt",
+    "package.json",
     "README.md",
-    "lib",
-    "webassembly"
+    "lib"
   ],
-  "main": "./lib/index.js",
-  "exports": {
-    ".": {
-      "default": "./lib/index.js"
-    },
-    "./worker": "./lib/worker/index.js",
-    "./wasm": "./lib/wasm/index.js",
-    "./webassembly/*": "./webassembly/*",
-    "./package.json": "./package.json"
-  },
+  "main": "lib/index.cjs.js",
+  "module": "lib/index.esm.js",
+  "types": "lib/index.d.ts",
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^26.0.1",
+    "@rollup/plugin-terser": "^0.4.4",
+    "@rollup/plugin-typescript": "^11.1.6",
     "@types/emscripten": "^1.39.6",
     "@types/jest": "^29.5.12",
     "@types/node": "^18.14.5",
@@ -43,8 +39,13 @@
     "jest-environment-jsdom": "^29.7.0",
     "prettier": "^3.2.5",
     "rimraf": "^5.0.5",
+    "rollup": "^4.12.1",
+    "rollup-plugin-copy": "^3.5.0",
+    "semver": "^7.6.3",
     "ts-jest": "^29.1.2",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "vite": "^5.1.6",
+    "vite-plugin-eslint": "^1.8.1"
   },
   "eslintConfig": {
     "root": true,
@@ -79,7 +80,7 @@
     },
     "ignorePatterns": [
       "lib/**",
-      "amalgam-st.js"
+      "src/webassembly/**"
     ],
     "env": {
       "browser": true,

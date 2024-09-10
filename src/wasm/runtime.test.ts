@@ -2,10 +2,10 @@ import fs from "node:fs";
 import path from "node:path";
 import { describe, expect, test, beforeAll } from "@jest/globals";
 import { initRuntime } from "./runtime";
+import server from "semver";
 
-const AMALGAM_WASM_DIR = "./webassembly/";
+const AMALGAM_WASM_DIR = "./src/webassembly/";
 const TESTS_DIR = "./tests/";
-const SEMVER_REGEX = /^(\d+\.)(\d+\.)(\d+)(.*)$/;
 
 describe("Test Amalgam Runtime ST", () => {
   let amlg: Awaited<ReturnType<typeof initRuntime>>;
@@ -102,7 +102,7 @@ describe("Test Amalgam Runtime ST", () => {
     // Test version is valid semver value
     const version = amlg.getVersion();
     expect(typeof version).toBe("string");
-    expect(version).toMatch(SEMVER_REGEX);
+    expect(server.valid(version)).not.toBeNull();
   });
 
   test("get concurrency type", async () => {
