@@ -1,6 +1,6 @@
 import { Amalgam, type AmalgamModule, type AmalgamOptions } from "../api";
 import { AmalgamRuntimeError } from "../errors";
-import AmalgamRuntime from "../../webassembly/amalgam-st.js";
+import AmalgamRuntime from "../webassembly/amalgam-st.cjs";
 
 export type { AmalgamOptions } from "../api";
 
