@@ -15,8 +15,6 @@
     "prepack": "npm run build"
   },
   "files": [
-    "LICENSE.txt",
-    "README.md",
     "lib"
   ],
   "main": "lib/index.cjs.js",

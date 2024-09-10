@@ -18,6 +18,10 @@ export default {
     copy({
       targets: [
         {
+          src: ["LICENSE.txt", "package.json", "package-lock.json", "README.md"],
+          dest: "lib",
+        },
+        {
           src: ["src/webassembly/amalgam-st.data", "src/webassembly/amalgam-st.wasm", "src/webassembly/version.json"],
           dest: "lib",
         },
