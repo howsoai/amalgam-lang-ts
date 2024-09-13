@@ -6,6 +6,10 @@
   "author": {
     "name": "Howso Incorporated"
   },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:howsoai/amalgam-lang-ts.git"
+  },
   "scripts": {
     "prebuild": "rimraf ./lib",
     "build": "rollup --config",
