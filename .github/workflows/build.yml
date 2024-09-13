@@ -33,7 +33,7 @@ jobs:
       - metadata
       - npm-test
     if: inputs.build-type == 'release'
-    uses: howsoai/.github/.github/workflows/npm-release-open-source.yml@21221-npm-open-source
+    uses: howsoai/.github/.github/workflows/npm-release-open-source.yml@main
     secrets: inherit
     with:
       version: ${{ needs.metadata.outputs.version }}
