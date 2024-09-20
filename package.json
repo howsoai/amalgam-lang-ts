@@ -7,7 +7,7 @@
     "name": "Howso Incorporated"
   },
   "repository": {
-    "url": "https://github.com/howsoai/amalgam-lang-ts"
+    "url": "git+https://github.com/howsoai/amalgam-lang-ts.git"
   },
   "scripts": {
     "prebuild": "rimraf ./lib",
