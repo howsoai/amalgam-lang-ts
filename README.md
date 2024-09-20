@@ -6,6 +6,7 @@ Provides a package around [@howso/amalgam](https://github.com/howsoai/amalgam) r
 
 ```bash
 npm i @howso/amalgam-lang
+npm i --save-dev @types/emscripten
 ```
 
 We highly suggest the use of a Worker. Create one that can be handed to `@howso/engine`.
