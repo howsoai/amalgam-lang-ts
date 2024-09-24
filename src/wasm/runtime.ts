@@ -42,9 +42,26 @@ export async function initRuntime(
         "boolean",
         [
           "string", // handle
-          "string", // amal_path
+          "string", // path
           "boolean", // persist
           "boolean", // load_contained
+          "string", // write_log
+          "string", // print_log
+        ],
+        args,
+      );
+      return status;
+    };
+
+    amlg.cloneEntity = function (...args) {
+      const status = amlg.ccall(
+        "CloneEntity",
+        "boolean",
+        [
+          "string", // handle
+          "string", // clone_handle
+          "string", // path
+          "boolean", // persist
           "string", // write_log
           "string", // print_log
         ],

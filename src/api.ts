@@ -9,6 +9,14 @@ export interface AmalgamModule {
     writeLog: string,
     printLog: string,
   ): boolean;
+  cloneEntity(
+    handle: string,
+    cloneHandle: string,
+    amlgPath: string,
+    persist: boolean,
+    writeLog: string,
+    printLog: string,
+  ): boolean;
   storeEntity(handle: string, uri: string, updatePersistenceLocation?: boolean, storeContainedEntities?: boolean): void;
   executeEntity(handle: string, label: string): void;
   executeEntityJson(handle: string, label: string, json: string): string;
@@ -46,12 +54,26 @@ export class Amalgam<T extends AmalgamModule = AmalgamModule> {
     this.setSBFDatastoreEnabled(sbfDatastoreEnabled);
   }
 
+  /**
+   * Get the version of Amalgam.
+   * @returns The Amalgam version string.
+   */
   public getVersion(): string {
     const version = this.runtime.getVersion();
     this.trace.log_comment("VERSION >", version);
     return version;
   }
 
+  /**
+   * Load an entity from file.
+   * @param handle The handle to use for the entity.
+   * @param uri The file path to the entity.
+   * @param persistent If true, all transactions will trigger the entity to be persisted at the source uri.
+   * @param loadContainedEntities If set to true, contained entities will be loaded.
+   * @param writeLog File path for writing a write log. Empty string disables this feature.
+   * @param printLog File path for writing a print log. Empty string disables this feature.
+   * @returns True if the entity was loaded successfully.
+   */
   public loadEntity(
     handle: string,
     uri: string,
@@ -66,6 +88,37 @@ export class Amalgam<T extends AmalgamModule = AmalgamModule> {
     return result;
   }
 
+  /**
+   * Clone an existing entity to a new handle.
+   * @param handle The source entity handle.
+   * @param cloneHandle The new entity handle.
+   * @param uri A file path to persist the new entity to. Ignored unless persistent is true.
+   * @param persistent If true, all transactions will trigger the entity to be persisted at the given uri.
+   * @param writeLog File path for writing a write log. An empty string disables this feature.
+   * @param printLog File path for writing a print log. An empty string disables this feature.
+   * @returns True if the entity was cloned successfully.
+   */
+  public cloneEntity(
+    handle: string,
+    cloneHandle: string,
+    uri = "",
+    persistent = false,
+    writeLog = "",
+    printLog = "",
+  ): boolean {
+    this.trace.log_command("CLONE_ENTITY", handle, cloneHandle, uri, persistent, writeLog, printLog);
+    const result = this.runtime.cloneEntity(handle, cloneHandle, uri, persistent, writeLog, printLog);
+    this.trace.log_reply(result);
+    return result;
+  }
+
+  /**
+   * Store an entity to file.
+   * @param handle The handle of the entity.
+   * @param uri The file path to persist to.
+   * @param updatePersistenceLocation If true, updates location entity is persisted to.
+   * @param storeContainedEntities If true, contained entities will also be persisted.
+   */
   public storeEntity(
     handle: string,
     uri: string,
@@ -76,11 +129,23 @@ export class Amalgam<T extends AmalgamModule = AmalgamModule> {
     this.runtime.storeEntity(handle, uri, updatePersistenceLocation, storeContainedEntities);
   }
 
+  /**
+   * Execute a label on an entity.
+   * @param handle The entity handle.
+   * @param label The label to execute.
+   */
   public executeEntity(handle: string, label: string): void {
     this.trace.log_comment("CALL > ExecuteEntity");
     this.runtime.executeEntity(handle, label);
   }
 
+  /**
+   * Execute a label on an entity with parameters.
+   * @param handle The entity handle.
+   * @param label The label to execute.
+   * @param data The parameter data to pass to the label.
+   * @returns The result of the label execution.
+   */
   public executeEntityJson<D = unknown, R = unknown>(handle: string, label: string, data: D): R | null {
     const payload = JSON.stringify(data ?? null);
     this.trace.log_time("EXECUTION START");
@@ -92,16 +157,30 @@ export class Amalgam<T extends AmalgamModule = AmalgamModule> {
     return JSON.parse(result);
   }
 
+  /**
+   * Unloads an entity.
+   * @param handle The entity handle.
+   */
   public destroyEntity(handle: string): void {
     this.trace.log_comment("CALL > DestroyEntity");
     this.runtime.destroyEntity(handle);
   }
 
+  /**
+   * Get handles of all loaded entities.
+   * @returns A list of entity handles.
+   */
   public getEntities(): string[] {
     this.trace.log_comment("CALL > GetEntities");
     return this.runtime.getEntities();
   }
 
+  /**
+   * Set the random seed.
+   * @param handle The entity handle.
+   * @param seed The new seed.
+   * @returns True if the set was successful.
+   */
   public setRandomSeed(handle: string, seed: string): boolean {
     this.trace.log_command("SET_RANDOM_SEED", seed);
     const result = this.runtime.setRandomSeed(handle, seed);
@@ -109,12 +188,24 @@ export class Amalgam<T extends AmalgamModule = AmalgamModule> {
     return result;
   }
 
+  /**
+   * Set a label in Amalgam using json.
+   * @param handle The entity handle.
+   * @param label The label name.
+   * @param data The data to assign to the label.
+   */
   public setJsonToLabel<D = unknown>(handle: string, label: string, data: D): void {
     const payload = JSON.stringify(data ?? null);
     this.trace.log_command("SET_JSON_TO_LABEL", handle, label, payload);
     this.runtime.setJsonToLabel(handle, label, payload);
   }
 
+  /**
+   * Get a label from Amalgam and returns it in json format.
+   * @param handle The entity handle.
+   * @param label The label name.
+   * @returns The label data.
+   */
   public getJsonFromLabel<R = unknown>(handle: string, label: string): R | null {
     this.trace.log_command("GET_JSON_FROM_LABEL", handle, label);
     const result = this.runtime.getJsonFromLabel(handle, label);
@@ -123,22 +214,42 @@ export class Amalgam<T extends AmalgamModule = AmalgamModule> {
     return JSON.parse(result);
   }
 
+  /**
+   * Set if SBF datastore is enabled.
+   * @param enabled If SBF tree structures should be enabled.
+   */
   public setSBFDatastoreEnabled(enabled: boolean): void {
     this.runtime.setSBFDatastoreEnabled(enabled);
   }
 
+  /**
+   * Get if SBF datastore is enabled.
+   * @returns True if SBF tree structures are currently enabled.
+   */
   public isSBFDatastoreEnabled(): boolean {
     return this.runtime.isSBFDatastoreEnabled();
   }
 
+  /**
+   * Set the maximum number of threads Amalgam may utilize.
+   * @param threads The number of threads.
+   */
   public setMaxNumThreads(threads: number): void {
     this.runtime.setMaxNumThreads(threads);
   }
 
+  /**
+   * Get the maximum number of threads Amalgam may utilize.
+   * @returns The number of threads.
+   */
   public getMaxNumThreads(): number {
     return Number(this.runtime.getMaxNumThreads());
   }
 
+  /**
+   * Get the concurrency type used by the loaded Amalgam library.
+   * @returns The library concurrency type.
+   */
   public getConcurrencyType(): string {
     return this.runtime.getConcurrencyType();
   }

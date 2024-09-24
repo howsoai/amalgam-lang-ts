@@ -35,6 +35,7 @@ export class AmalgamTrace {
 
 export type AmalgamTraceCommand =
   | "LOAD_ENTITY"
+  | "CLONE_ENTITY"
   | "EXECUTE_ENTITY_JSON"
   | "SET_JSON_TO_LABEL"
   | "GET_JSON_FROM_LABEL"
