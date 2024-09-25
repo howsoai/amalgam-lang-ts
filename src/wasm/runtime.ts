@@ -84,6 +84,7 @@ export async function initRuntime(
       );
       return status;
     };
+
     amlg.verifyEntity = function (...args) {
       // Since the return value is a struct, we must preallocate a pointer for it and pass it in
       // 1 byte (loaded) + 7 bytes (padding) + 8 bytes (message) + 8 bytes (version)
@@ -109,6 +110,7 @@ export async function initRuntime(
         amlg._free(structPtr);
       }
     };
+
     amlg.storeEntity = amlg.cwrap("StoreEntity", null, ["string", "string", "boolean", "boolean"]);
     amlg.executeEntity = amlg.cwrap("ExecuteEntity", null, ["string", "string"]);
     amlg.executeEntityJson = function (...args) {
