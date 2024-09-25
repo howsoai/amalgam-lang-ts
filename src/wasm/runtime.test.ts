@@ -29,7 +29,7 @@ describe("Test Amalgam Runtime ST", () => {
     amlg.runtime.FS.createDataFile("", "entity.amlg", entity, true, false, false);
   });
 
-  test("verity entity status", async () => {
+  test("verify entity", async () => {
     // Test verify entity status response
     // Since this is a plain amlg file, verify should fail with a message
     const status = amlg.verifyEntity("entity.amlg");
@@ -40,7 +40,7 @@ describe("Test Amalgam Runtime ST", () => {
     expect(typeof status.version).toBe("string");
   });
 
-  test("load entity status", async () => {
+  test("load entity", async () => {
     // Test load entity status response
     try {
       const status = amlg.loadEntity("load_test", "entity.amlg");
