@@ -26,13 +26,11 @@ export async function initRuntime(
 
     amlg.pointerToString = function (ptr: number | bigint) {
       // Convert pointer to UTF-8 string value and free memory
-      let value: string;
       try {
-        value = amlg.UTF8ToString(Number(ptr));
+        return amlg.UTF8ToString(Number(ptr));
       } finally {
         amlg._free(ptr as unknown as number);
       }
-      return value;
     };
 
     amlg.loadEntity = function (...args) {
@@ -56,8 +54,8 @@ export async function initRuntime(
           ],
           [BigInt(structPtr) as unknown as number, ...args],
         );
-        const messagePtr = amlg.getValue(structPtr + 8, "i32");
-        const versionPtr = amlg.getValue(structPtr + 16, "i32");
+        const messagePtr = amlg.getValue(structPtr + 8, "i64");
+        const versionPtr = amlg.getValue(structPtr + 16, "i64");
         return {
           loaded: Boolean(amlg.getValue(structPtr, "i8")),
           message: amlg.pointerToString(messagePtr),
@@ -99,8 +97,8 @@ export async function initRuntime(
           ],
           [BigInt(structPtr) as unknown as number, ...args],
         );
-        const messagePtr = amlg.getValue(structPtr + 8, "i32");
-        const versionPtr = amlg.getValue(structPtr + 16, "i32");
+        const messagePtr = amlg.getValue(structPtr + 8, "i64");
+        const versionPtr = amlg.getValue(structPtr + 16, "i64");
         return {
           loaded: Boolean(amlg.getValue(structPtr, "i8")),
           message: amlg.pointerToString(messagePtr),

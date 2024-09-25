@@ -31,18 +31,13 @@ describe("Test Amalgam Runtime ST", () => {
 
   test("verity entity status", async () => {
     // Test verify entity status response
-    try {
-      // Since this is a plain amlg file, verify should fail with a message
-      const status = amlg.verifyEntity("entity.amlg");
-      expect(typeof status.loaded).toBe("boolean");
-      expect(status.loaded).toEqual(false);
-      expect(typeof status.message).toBe("string");
-      expect(status.message).toBe("CAML does not contain a valid header");
-      expect(typeof status.version).toBe("string");
-    } finally {
-      // cleanup loaded entity
-      amlg.destroyEntity("load_test");
-    }
+    // Since this is a plain amlg file, verify should fail with a message
+    const status = amlg.verifyEntity("entity.amlg");
+    expect(typeof status.loaded).toBe("boolean");
+    expect(status.loaded).toEqual(false);
+    expect(typeof status.message).toBe("string");
+    expect(status.message).toBe("CAML does not contain a valid header");
+    expect(typeof status.version).toBe("string");
   });
 
   test("load entity status", async () => {
@@ -57,6 +52,25 @@ describe("Test Amalgam Runtime ST", () => {
     } finally {
       // cleanup loaded entity
       amlg.destroyEntity("load_test");
+    }
+  });
+
+  test("clone entity", async () => {
+    // Test cloning entities
+    try {
+      const status1 = amlg.loadEntity("entity_1", "entity.amlg");
+      expect(status1.loaded).toEqual(true);
+      const status2 = amlg.cloneEntity("entity_1", "entity_2");
+      expect(status2).toEqual(true);
+      const entities = amlg.getEntities();
+      expect(Array.isArray(entities)).toBe(true);
+      expect(entities.length).toBe(2);
+      expect(entities.includes("entity_1")).toBe(true);
+      expect(entities.includes("entity_2")).toBe(true);
+    } finally {
+      // cleanup loaded entities
+      amlg.destroyEntity("entity_1");
+      amlg.destroyEntity("entity_2");
     }
   });
 
