@@ -6,9 +6,11 @@ export interface AmalgamModule {
     uri: string,
     persistent: boolean,
     loadContainedEntities: boolean,
+    escapeFilename: boolean,
+    escapeContainedFilenames: boolean,
     writeLog: string,
     printLog: string,
-  ): boolean;
+  ): EntityStatus;
   cloneEntity(
     handle: string,
     cloneHandle: string,
@@ -17,6 +19,7 @@ export interface AmalgamModule {
     writeLog: string,
     printLog: string,
   ): boolean;
+  verifyEntity(uri: string): EntityStatus;
   storeEntity(handle: string, uri: string, updatePersistenceLocation?: boolean, storeContainedEntities?: boolean): void;
   executeEntity(handle: string, label: string): void;
   executeEntityJson(handle: string, label: string, json: string): string;
@@ -31,6 +34,12 @@ export interface AmalgamModule {
   setMaxNumThreads(threads: number): void;
   getMaxNumThreads(): number;
   getConcurrencyType(): string;
+}
+
+export interface EntityStatus {
+  loaded: boolean;
+  message: string;
+  version: string;
 }
 
 export interface AmalgamOptions {
@@ -70,6 +79,8 @@ export class Amalgam<T extends AmalgamModule = AmalgamModule> {
    * @param uri The file path to the entity.
    * @param persistent If true, all transactions will trigger the entity to be persisted at the source uri.
    * @param loadContainedEntities If set to true, contained entities will be loaded.
+   * @param escapeFilename If set to true, the file name will be aggressively escaped.
+   * @param escapeContainedFilenames If set to true, file names of contained entities will be aggressively escaped.
    * @param writeLog File path for writing a write log. Empty string disables this feature.
    * @param printLog File path for writing a print log. Empty string disables this feature.
    * @returns True if the entity was loaded successfully.
@@ -79,11 +90,44 @@ export class Amalgam<T extends AmalgamModule = AmalgamModule> {
     uri: string,
     persistent = false,
     loadContainedEntities = false,
+    escapeFilename = false,
+    escapeContainedFilenames = false,
     writeLog = "",
     printLog = "",
-  ): boolean {
-    this.trace.log_command("LOAD_ENTITY", handle, uri, persistent, loadContainedEntities, writeLog, printLog);
-    const result = this.runtime.loadEntity(handle, uri, persistent, loadContainedEntities, writeLog, printLog);
+  ): EntityStatus {
+    this.trace.log_command(
+      "LOAD_ENTITY",
+      handle,
+      uri,
+      persistent,
+      loadContainedEntities,
+      escapeFilename,
+      escapeContainedFilenames,
+      writeLog,
+      printLog,
+    );
+    const result = this.runtime.loadEntity(
+      handle,
+      uri,
+      persistent,
+      loadContainedEntities,
+      escapeFilename,
+      escapeContainedFilenames,
+      writeLog,
+      printLog,
+    );
+    this.trace.log_reply(result);
+    return result;
+  }
+
+  /**
+   * Verify an entity from an Amalgam source file.
+   * @param uri The file path to the entity.
+   * @returns The status of the entity.
+   */
+  public verifyEntity(uri: string): EntityStatus {
+    this.trace.log_command("VERIFY_ENTITY", uri);
+    const result = this.runtime.verifyEntity(uri);
     this.trace.log_reply(result);
     return result;
   }

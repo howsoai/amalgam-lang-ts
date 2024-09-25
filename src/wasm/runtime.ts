@@ -36,21 +36,36 @@ export async function initRuntime(
     };
 
     amlg.loadEntity = function (...args) {
-      // TODO #19512: Support LoadEntityStatus struct of LoadEntity
-      const status = amlg.ccall(
-        "LoadEntityLegacy",
-        "boolean",
-        [
-          "string", // handle
-          "string", // path
-          "boolean", // persist
-          "boolean", // load_contained
-          "string", // write_log
-          "string", // print_log
-        ],
-        args,
-      );
-      return status;
+      // Since the return value is a struct, we must preallocate a pointer for it and pass it in
+      // 1 byte (loaded) + 7 bytes (padding) + 8 bytes (message) + 8 bytes (version)
+      const structPtr = amlg._malloc(24);
+      try {
+        amlg.ccall(
+          "LoadEntity",
+          null,
+          [
+            "number", // struct pointer
+            "string", // handle
+            "string", // path
+            "boolean", // persistent
+            "boolean", // load_contained
+            "boolean", // escape_filename
+            "boolean", // escape_contained_filenames
+            "string", // write_log
+            "string", // print_log
+          ],
+          [BigInt(structPtr) as unknown as number, ...args],
+        );
+        const messagePtr = amlg.getValue(structPtr + 8, "i32");
+        const versionPtr = amlg.getValue(structPtr + 16, "i32");
+        return {
+          loaded: Boolean(amlg.getValue(structPtr, "i8")),
+          message: amlg.pointerToString(messagePtr),
+          version: amlg.pointerToString(versionPtr),
+        };
+      } finally {
+        amlg._free(structPtr);
+      }
     };
 
     amlg.cloneEntity = function (...args) {
@@ -61,13 +76,38 @@ export async function initRuntime(
           "string", // handle
           "string", // clone_handle
           "string", // path
-          "boolean", // persist
+          "boolean", // persistent
           "string", // write_log
           "string", // print_log
         ],
         args,
       );
       return status;
+    };
+    amlg.verifyEntity = function (...args) {
+      // Since the return value is a struct, we must preallocate a pointer for it and pass it in
+      // 1 byte (loaded) + 7 bytes (padding) + 8 bytes (message) + 8 bytes (version)
+      const structPtr = amlg._malloc(24);
+      try {
+        amlg.ccall(
+          "VerifyEntity",
+          null,
+          [
+            "number", // struct pointer
+            "string", // path
+          ],
+          [BigInt(structPtr) as unknown as number, ...args],
+        );
+        const messagePtr = amlg.getValue(structPtr + 8, "i32");
+        const versionPtr = amlg.getValue(structPtr + 16, "i32");
+        return {
+          loaded: Boolean(amlg.getValue(structPtr, "i8")),
+          message: amlg.pointerToString(messagePtr),
+          version: amlg.pointerToString(versionPtr),
+        };
+      } finally {
+        amlg._free(structPtr);
+      }
     };
     amlg.storeEntity = amlg.cwrap("StoreEntity", null, ["string", "string", "boolean", "boolean"]);
     amlg.executeEntity = amlg.cwrap("ExecuteEntity", null, ["string", "string"]);

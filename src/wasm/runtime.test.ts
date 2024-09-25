@@ -29,12 +29,31 @@ describe("Test Amalgam Runtime ST", () => {
     amlg.runtime.FS.createDataFile("", "entity.amlg", entity, true, false, false);
   });
 
+  test("verity entity status", async () => {
+    // Test verify entity status response
+    try {
+      // Since this is a plain amlg file, verify should fail with a message
+      const status = amlg.verifyEntity("entity.amlg");
+      expect(typeof status.loaded).toBe("boolean");
+      expect(status.loaded).toEqual(false);
+      expect(typeof status.message).toBe("string");
+      expect(status.message).toBe("CAML does not contain a valid header");
+      expect(typeof status.version).toBe("string");
+    } finally {
+      // cleanup loaded entity
+      amlg.destroyEntity("load_test");
+    }
+  });
+
   test("load entity status", async () => {
     // Test load entity status response
     try {
       const status = amlg.loadEntity("load_test", "entity.amlg");
-      expect(typeof status).toBe("boolean");
-      expect(status).toEqual(true);
+      expect(typeof status.loaded).toBe("boolean");
+      expect(status.loaded).toEqual(true);
+      expect(typeof status.message).toBe("string");
+      expect(status.message.length).toBe(0);
+      expect(typeof status.version).toBe("string");
     } finally {
       // cleanup loaded entity
       amlg.destroyEntity("load_test");
