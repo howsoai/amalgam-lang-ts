@@ -29,7 +29,7 @@ export async function initRuntime(
       try {
         return amlg.UTF8ToString(Number(ptr));
       } finally {
-        amlg._free(ptr as unknown as number);
+        amlg._free(BigInt(ptr) as unknown as number);
       }
     };
 
