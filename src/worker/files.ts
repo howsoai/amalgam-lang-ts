@@ -2,7 +2,11 @@ import type { Request, Response } from "./messages";
 
 export interface IFileSystem {
   createLazyFile(parent: string, name: string, url: string, canRead?: boolean, canWrite?: boolean): Promise<void>;
-  writeFile(path: string, data: string | DataView): Promise<void>;
+  writeFile(
+    path: string,
+    data: string | ArrayBufferView | DataView,
+    opts?: { flags?: string | undefined },
+  ): Promise<void>;
   readFile(path: string, opts: { encoding: "binary" }): Promise<Uint8Array>;
   readFile(path: string, opts: { encoding: "utf8" }): Promise<string>;
   readFile(path: string): Promise<Uint8Array>;
