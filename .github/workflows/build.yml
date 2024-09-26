@@ -3,6 +3,17 @@ run-name: "Branch Build (${{ github.run_attempt }}.${{ github.run_number }}) - $
 
 on:
   workflow_dispatch:
+    inputs:
+      amalgam-build:
+        description: |
+          (Optional) Amalgam build or version number. Defaults to pinned release.
+
+          Examples:
+            '6807310618',
+            'https://github.com/howsoai/amalgam/actions/runs/6807310618',
+            '57.0.1'
+        required: false
+        type: string
   workflow_call:
     inputs:
       build-type:
@@ -23,10 +34,15 @@ jobs:
     with:
       build-type: ${{ inputs.build-type }}
       optional-release-tag: ${{ inputs.optional-release-tag }}
+      amalgam-build: ${{ inputs.amalgam-build }}
 
   npm-test:
+    needs:
+      - metadata
     uses: howsoai/.github/.github/workflows/npm-test.yml@main
     secrets: inherit
+    with:
+      upstream-details: ${{ needs.metadata.outputs.upstream-details }}
 
   release:
     needs:
