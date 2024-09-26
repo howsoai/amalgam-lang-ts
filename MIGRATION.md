@@ -1,6 +1,6 @@
 # Migration guide
 
-# 55.0.0
+## 55.0.0
 
 This breaking change modifies the parameters and return of Amalgam.loadEntity. Two new boolean parameters have been
 introduced for escapeFilename and escapeContainedFilenames. The return object is no longer a boolean but an object that
