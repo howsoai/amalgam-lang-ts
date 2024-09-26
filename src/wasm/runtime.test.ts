@@ -38,6 +38,7 @@ describe("Test Amalgam Runtime ST", () => {
     expect(typeof status.message).toBe("string");
     expect(status.message).toBe("CAML does not contain a valid header");
     expect(typeof status.version).toBe("string");
+    expect(status.version).toBe(""); // No header in amlg files so this will be blank
   });
 
   test("load entity", async () => {
@@ -65,8 +66,8 @@ describe("Test Amalgam Runtime ST", () => {
       const entities = amlg.getEntities();
       expect(Array.isArray(entities)).toBe(true);
       expect(entities.length).toBe(2);
-      expect(entities.includes("entity_1")).toBe(true);
-      expect(entities.includes("entity_2")).toBe(true);
+      expect(entities).toContain("entity_1");
+      expect(entities).toContain("entity_2");
     } finally {
       // cleanup loaded entities
       amlg.destroyEntity("entity_1");
