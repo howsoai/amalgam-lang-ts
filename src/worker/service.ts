@@ -5,6 +5,8 @@ import { isRequest, MessageEventLike, ProtocolMessage, Request, Response } from 
 
 export type AmalgamOperation =
   | "loadEntity"
+  | "verifyEntity"
+  | "cloneEntity"
   | "storeEntity"
   | "executeEntity"
   | "executeEntityJson"
@@ -62,6 +64,8 @@ export function isAmalgamOperation(command: string): command is AmalgamOperation
   }
   switch (command) {
     case "loadEntity":
+    case "verifyEntity":
+    case "cloneEntity":
     case "storeEntity":
     case "executeEntity":
     case "executeEntityJson":

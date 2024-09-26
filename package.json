@@ -23,7 +23,7 @@
     "README.md",
     "lib"
   ],
-  "main": "lib/index.cjs.js",
+  "main": "lib/index.cjs",
   "module": "lib/index.esm.js",
   "types": "lib/index.d.ts",
   "devDependencies": {

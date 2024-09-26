@@ -19,7 +19,7 @@ export default {
     copy({
       targets: [
         {
-          src: ["src/webassembly/amalgam-st.data", "src/webassembly/amalgam-st.wasm", "src/webassembly/version.json"],
+          src: ["src/webassembly/amalgam-st.data", "src/webassembly/amalgam-st.wasm"],
           dest: "lib",
         },
       ],
@@ -27,13 +27,15 @@ export default {
     terser(), // minifies generated bundles
   ],
   external: [
+    "fs",
+    "path",
     ...Object.keys(pkg.dependencies || {}),
     ...Object.keys(pkg.peerDependencies || {}),
     ...Object.keys(pkg.optionalDependencies || {}),
   ],
   output: [
     {
-      file: "lib/index.cjs.js",
+      file: "lib/index.cjs",
       format: "cjs",
     },
     {
