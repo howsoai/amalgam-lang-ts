@@ -36,6 +36,17 @@ export interface AmalgamModule {
   getConcurrencyType(): string;
 }
 
+export interface AmalgamEmscriptenModule extends EmscriptenModule, AmalgamModule {
+  cwrap: typeof cwrap;
+  ccall: typeof ccall;
+  UTF8ToString: typeof UTF8ToString;
+  getValue: typeof getValue;
+  setValue: typeof setValue;
+  pointerToString: (ptr: number | bigint) => string;
+  FS: typeof FS;
+  mainScriptUrlOrBlob: string | URL; // Used to manually set url for multithreaded workers (amalgam-mt.cjs)
+}
+
 export interface EntityStatus {
   loaded: boolean;
   message: string;

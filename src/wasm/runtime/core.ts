@@ -1,19 +1,6 @@
-import { Amalgam, type AmalgamModule, type AmalgamOptions } from "../api";
-import { AmalgamRuntimeError } from "../errors";
-import AmalgamRuntime from "../webassembly/amalgam-st.cjs";
-
-export type { AmalgamOptions } from "../api";
-
-export interface AmalgamEmscriptenModule extends EmscriptenModule, AmalgamModule {
-  cwrap: typeof cwrap;
-  ccall: typeof ccall;
-  UTF8ToString: typeof UTF8ToString;
-  getValue: typeof getValue;
-  setValue: typeof setValue;
-  pointerToString: (ptr: number | bigint) => string;
-  FS: typeof FS;
-  mainScriptUrlOrBlob: string | URL; // Used to manually set url for multithreaded workers (amalgam-mt.cjs)
-}
+import { Amalgam, AmalgamEmscriptenModule, type AmalgamOptions } from "../../api";
+import { AmalgamRuntimeError } from "../../errors";
+import AmalgamRuntime from "../../webassembly/amalgam-st.cjs";
 
 export async function initRuntime(
   options?: AmalgamOptions,

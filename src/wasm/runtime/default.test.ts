@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { describe, expect, test, beforeAll } from "@jest/globals";
-import { initRuntime } from "./runtime";
+import { initRuntime } from "./core";
 import server from "semver";
 
 const AMALGAM_WASM_DIR = "./src/webassembly/";
