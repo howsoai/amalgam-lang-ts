@@ -39,6 +39,39 @@ import wasmUri from "@howso/amalgam-lang/lib/amalgam-st.wasm?url";
 })();
 ```
 
+### Debugging runtime
+
+In some circumstance you may need to access a debug enabled version of the runtime for tasks like memory debugging.
+A separate build runtime and wasm build are included and maybe be used for this:
+
+`@/workers/AmalgamWorker`:
+
+```ts
+import { AmalgamWasmService, initDebugRuntime } from "@howso/amalgam-lang";
+import wasmDataUri from "@howso/amalgam-lang/lib/amalgam-st-debug.data?url";
+import wasmUri from "@howso/amalgam-lang/lib/amalgam-st-debug.wasm?url";
+
+(async function () {
+  const svc = new AmalgamWasmService((options) => {
+    return initDebugRuntime(options, {
+      locateFile: (path: string) => {
+        // Override file paths so we can use hashed version in build
+        if (path.endsWith("amalgam-st-debug.wasm")) {
+          return wasmUri;
+        } else if (path.endsWith("amalgam-st-debug.data")) {
+          return wasmDataUri;
+        }
+        return self.location.href + path;
+      },
+    });
+  });
+  self.onmessage = async (ev) => {
+    svc.dispatch(ev);
+  };
+  self.postMessage({ type: "event", event: "ready" });
+})();
+```
+
 ## Development
 
 ### Syncing with new Amalgam releases

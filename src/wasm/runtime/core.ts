@@ -1,15 +1,12 @@
 import { Amalgam, AmalgamEmscriptenModule, type AmalgamOptions } from "../../api";
 import { AmalgamRuntimeError } from "../../errors";
-import AmalgamRuntime from "../../webassembly/amalgam-st.cjs";
 
-export async function initRuntime(
+export async function initCoreRuntime(
+  amlg: AmalgamEmscriptenModule,
   options?: AmalgamOptions,
-  runtimeOverrides?: Partial<AmalgamEmscriptenModule>,
 ): Promise<Amalgam<AmalgamEmscriptenModule>> {
   try {
     // Note: Due to Memory64 most pointers will be BigInt, but not all methods are typed correctly so we cast
-
-    const amlg = await AmalgamRuntime<AmalgamEmscriptenModule>(runtimeOverrides);
 
     amlg.pointerToString = function (ptr: number | bigint) {
       // Convert pointer to UTF-8 string value and free memory

@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import { initRuntime } from "./default";
+import { initDebugRuntime } from "./debug";
 import {
   testCloneEntity,
   testConcurrencyType,
@@ -16,11 +16,11 @@ const AMALGAM_WASM_DIR = "./src/webassembly/";
 const TESTS_DIR = "./tests/";
 
 describe("Test Amalgam Runtime ST", () => {
-  let amlg: Awaited<ReturnType<typeof initRuntime>>;
+  let amlg: Awaited<ReturnType<typeof initDebugRuntime>>;
 
   beforeAll(async () => {
     // Setup AmalgamRuntime
-    amlg = await initRuntime(undefined, {
+    amlg = await initDebugRuntime(undefined, {
       wasmBinary: fs.readFileSync(path.resolve(AMALGAM_WASM_DIR, "amalgam-st.wasm")),
       getPreloadedPackage: function (packagePath) {
         // Manually load package data from file system
