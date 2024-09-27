@@ -15,6 +15,7 @@ export class AmalgamWasmService extends AmalgamWorkerService<AmalgamEmscriptenMo
         switch (request.command) {
           case "readdir":
           case "readFile":
+          case "analyzePath":
             this.sendResponse(body, request, channel);
             break;
           default:
