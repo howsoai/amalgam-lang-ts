@@ -2,11 +2,7 @@ import type { Request, Response } from "./messages";
 
 export interface IFileSystem {
   createLazyFile(parent: string, name: string, url: string, canRead?: boolean, canWrite?: boolean): Promise<void>;
-  writeFile(
-    path: string,
-    data: string | ArrayBufferView | DataView,
-    opts?: { flags?: string | undefined },
-  ): Promise<void>;
+  writeFile(path: string, data: string | ArrayBufferView, opts?: { flags?: string | undefined }): Promise<void>;
   readFile(path: string, opts: { encoding: "binary" }): Promise<Uint8Array>;
   readFile(path: string, opts: { encoding: "utf8" }): Promise<string>;
   readFile(path: string): Promise<Uint8Array>;
@@ -15,9 +11,11 @@ export interface IFileSystem {
   mkdir(path: string, mode?: number): Promise<void>;
   rmdir(path: string): Promise<void>;
   readdir(path: string): Promise<string[]>;
+  analyzePath(path: string, dontResolveLastLink?: boolean): Promise<FS.Analyze>;
 }
 
 export type FileSystemOperation =
+  | "analyzePath"
   | "createLazyFile"
   | "writeFile"
   | "readFile"
@@ -32,7 +30,9 @@ export type FileSystemResponseBody<T extends FileSystemOperation> = T extends "r
   ? Uint8Array | string
   : T extends "readdir"
     ? string[]
-    : void;
+    : T extends "analyzePath"
+      ? FS.Analyze
+      : void;
 
 export interface FileSystemRequest<T extends FileSystemOperation = FileSystemOperation> extends Request {
   command: T;
@@ -49,6 +49,7 @@ export function isFileSystemRequest(command: string): command is FileSystemOpera
     return false;
   }
   switch (command) {
+    case "analyzePath":
     case "createLazyFile":
     case "writeFile":
     case "readFile":
