@@ -1,3 +1,3 @@
-export * from "./runtime/core";
+export * from "./runtime";
 export * from "./service";
 export * from "./util";
