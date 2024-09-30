@@ -56,9 +56,9 @@ import wasmUri from "@howso/amalgam-lang/lib/amalgam-st-debug.wasm?url";
     return initDebugRuntime(options, {
       locateFile: (path: string) => {
         // Override file paths so we can use hashed version in build
-        if (path.endsWith("amalgam-st-debug.wasm")) {
+        if (path.endsWith("amalgam-st.wasm")) {
           return wasmUri;
-        } else if (path.endsWith("amalgam-st-debug.data")) {
+        } else if (path.endsWith("amalgam-st.data")) {
           return wasmDataUri;
         }
         return self.location.href + path;
