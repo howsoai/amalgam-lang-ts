@@ -11,7 +11,9 @@ export default {
   input: "src/index.ts",
   // preserveModules: true,
   plugins: [
-    commonjs(),
+    commonjs({
+      ignore: ["fs", "path"],
+    }),
     typescript({
       noEmitOnError: true,
       tsconfig: "./tsconfig.build.json",
@@ -32,8 +34,6 @@ export default {
     terser(), // minifies generated bundles
   ],
   external: [
-    "fs",
-    "path",
     ...Object.keys(pkg.dependencies || {}),
     ...Object.keys(pkg.peerDependencies || {}),
     ...Object.keys(pkg.optionalDependencies || {}),
