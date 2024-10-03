@@ -31,7 +31,7 @@ export default {
         },
       ],
     }),
-    terser(), // minifies generated bundles
+    // terser(), // minifies generated bundles
   ],
   external: [
     ...Object.keys(pkg.dependencies || {}),
