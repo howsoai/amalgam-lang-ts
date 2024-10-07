@@ -21,7 +21,7 @@ describe("Test Amalgam Runtime ST", () => {
   beforeAll(async () => {
     // Setup AmalgamRuntime
     amlg = await initDebugRuntime(undefined, {
-      wasmBinary: fs.readFileSync(path.resolve(AMALGAM_WASM_DIR, "amalgam-st.wasm")),
+      wasmBinary: fs.readFileSync(path.resolve(AMALGAM_WASM_DIR, "amalgam-st-debug.wasm")),
       getPreloadedPackage: function (packagePath) {
         // Manually load package data from file system
         const data = fs.readFileSync(packagePath);
