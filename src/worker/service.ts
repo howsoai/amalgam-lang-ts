@@ -182,7 +182,7 @@ export class AmalgamWorkerService<T extends AmalgamModule = AmalgamModule> {
       command,
       body,
     };
-    this.options.logger.debug("sendResponse", msg);
+    this.options.logger.debug("sendResponse", { command, body });
     channel.postMessage(msg);
   }
 
