@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-interface */
 import { Amalgam, AmalgamModule, type AmalgamOptions } from "../api";
 import { AmalgamError } from "../errors";
+import { Logger, nullLogger } from "../utilities";
 import { isRequest, MessageEventLike, ProtocolMessage, Request, Response } from "./messages";
 
 export type AmalgamOperation =
@@ -87,17 +88,22 @@ export function isAmalgamOperation(command: string): command is AmalgamOperation
 }
 
 export interface AmalgamWorkerServiceOptions {
+  /** @deprecated Previously exposed errors while enabled. Please a custom migrate to logger object. */
   debug?: boolean;
+  logger: Logger;
 }
 
 export class AmalgamWorkerService<T extends AmalgamModule = AmalgamModule> {
   protected amlg?: Amalgam<T>;
   protected initialized = false;
+  protected readonly options: AmalgamWorkerServiceOptions;
 
   constructor(
     protected readonly initializer: (options?: AmalgamOptions) => Promise<Amalgam<T>>,
-    protected readonly options: AmalgamWorkerServiceOptions = {},
-  ) {}
+    options: Partial<AmalgamWorkerServiceOptions> = {},
+  ) {
+    this.options = { logger: nullLogger, ...options };
+  }
 
   /**
    * Dispatch a message.
@@ -141,6 +147,7 @@ export class AmalgamWorkerService<T extends AmalgamModule = AmalgamModule> {
     if (this.options.debug) {
       console.error(error);
     }
+    this.options.logger.error(error, request);
 
     let instance: AmalgamError;
     if (error instanceof AmalgamError) {
@@ -175,6 +182,7 @@ export class AmalgamWorkerService<T extends AmalgamModule = AmalgamModule> {
       command,
       body,
     };
+    this.options.logger.debug("sendResponse", msg);
     channel.postMessage(msg);
   }
 
