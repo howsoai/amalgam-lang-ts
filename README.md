@@ -33,7 +33,7 @@ import wasmUri from "@howso/amalgam-lang/lib/amalgam-st.wasm?url";
         },
       });
     },
-    { logger: console },
+    { logger: { ...console, debug: () => {} } },
   );
   self.onmessage = async (ev) => {
     svc.dispatch(ev);
@@ -45,9 +45,9 @@ import wasmUri from "@howso/amalgam-lang/lib/amalgam-st.wasm?url";
 ### Debugging runtime
 
 In some circumstance you may need to access a debug enabled version of the runtime for tasks like memory debugging.
-A separate build runtime and wasm build are included and maybe be used for this:
+A separate build runtime and wasm build are included and may be used for this:
 
-`@/workers/AmalgamWorker`:
+`@/workers/AmalgamDebugWorker`:
 
 ```ts
 import { AmalgamWasmService, initDebugRuntime } from "@howso/amalgam-lang";
@@ -77,6 +77,9 @@ import wasmUri from "@howso/amalgam-lang/lib/amalgam-st-debug.wasm?url";
   self.postMessage({ type: "event", event: "ready" });
 })();
 ```
+
+This build of wasm includes externalized DWARF debugging information typically consumed by C/C++ DevTools.
+Chrome provides an [extension](https://chromewebstore.google.com/detail/cc++-devtools-support-dwa/pdcpmagijalfljmkmjngeonclgbbannb) that can use these files.
 
 ## Development
 
