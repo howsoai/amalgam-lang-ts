@@ -19,19 +19,22 @@ import wasmDataUri from "@howso/amalgam-lang/lib/amalgam-st.data?url";
 import wasmUri from "@howso/amalgam-lang/lib/amalgam-st.wasm?url";
 
 (async function () {
-  const svc = new AmalgamWasmService((options) => {
-    return initRuntime(options, {
-      locateFile: (path: string) => {
-        // Override file paths so we can use hashed version in build
-        if (path.endsWith("amalgam-st.wasm")) {
-          return wasmUri;
-        } else if (path.endsWith("amalgam-st.data")) {
-          return wasmDataUri;
-        }
-        return self.location.href + path;
-      },
-    });
-  });
+  const svc = new AmalgamWasmService(
+    (options) => {
+      return initRuntime(options, {
+        locateFile: (path: string) => {
+          // Override file paths so we can use hashed version in build
+          if (path.endsWith("amalgam-st.wasm")) {
+            return wasmUri;
+          } else if (path.endsWith("amalgam-st.data")) {
+            return wasmDataUri;
+          }
+          return self.location.href + path;
+        },
+      });
+    },
+    { logger: console },
+  );
   self.onmessage = async (ev) => {
     svc.dispatch(ev);
   };
@@ -52,19 +55,22 @@ import wasmDataUri from "@howso/amalgam-lang/lib/amalgam-st-debug.data?url";
 import wasmUri from "@howso/amalgam-lang/lib/amalgam-st-debug.wasm?url";
 
 (async function () {
-  const svc = new AmalgamWasmService((options) => {
-    return initDebugRuntime(options, {
-      locateFile: (path: string) => {
-        // Override file paths so we can use hashed version in build
-        if (path.endsWith("amalgam-st.wasm")) {
-          return wasmUri;
-        } else if (path.endsWith("amalgam-st.data")) {
-          return wasmDataUri;
-        }
-        return self.location.href + path;
-      },
-    });
-  });
+  const svc = new AmalgamWasmService(
+    (options) => {
+      return initDebugRuntime(options, {
+        locateFile: (path: string) => {
+          // Override file paths so we can use hashed version in build
+          if (path.endsWith("amalgam-st-debug.wasm")) {
+            return wasmUri;
+          } else if (path.endsWith("amalgam-st-debug.data")) {
+            return wasmDataUri;
+          }
+          return self.location.href + path;
+        },
+      });
+    },
+    { logger: console },
+  );
   self.onmessage = async (ev) => {
     svc.dispatch(ev);
   };
