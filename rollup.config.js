@@ -25,7 +25,7 @@ export default {
             "src/webassembly/amalgam-st.data",
             "src/webassembly/amalgam-st.wasm",
             "src/webassembly/amalgam-st-debug.data",
-            "src/webassembly/amalgam-st-debug.wasm",
+            "src/webassembly/amalgam-st-debug.wasm*",
           ],
           dest: "lib",
         },
