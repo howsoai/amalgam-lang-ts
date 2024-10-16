@@ -45,10 +45,9 @@ export async function initRuntime(
             "number", // struct pointer
             "string", // handle
             "string", // path
+            "string", // file_type
             "boolean", // persistent
-            "boolean", // load_contained
-            "boolean", // escape_filename
-            "boolean", // escape_contained_filenames
+            "string", // json_file_params
             "string", // write_log
             "string", // print_log
           ],
@@ -74,7 +73,9 @@ export async function initRuntime(
           "string", // handle
           "string", // clone_handle
           "string", // path
+          "string", // file_type
           "boolean", // persistent
+          "string", // json_file_params
           "string", // write_log
           "string", // print_log
         ],
@@ -109,7 +110,13 @@ export async function initRuntime(
       }
     };
 
-    amlg.storeEntity = amlg.cwrap("StoreEntity", null, ["string", "string", "boolean", "boolean"]);
+    amlg.storeEntity = amlg.cwrap("StoreEntity", null, [
+      "string", // handle
+      "string", // path
+      "string", // file_type
+      "boolean", // persistent
+      "string", // json_file_params
+    ]);
     amlg.executeEntity = amlg.cwrap("ExecuteEntity", null, ["string", "string"]);
     amlg.executeEntityJson = function (...args) {
       const ptr = amlg.ccall("ExecuteEntityJsonPtr", "number", ["string", "string", "string"], args);
