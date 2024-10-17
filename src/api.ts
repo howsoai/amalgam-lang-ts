@@ -329,6 +329,6 @@ export class Amalgam<T extends AmalgamModule = AmalgamModule> {
     if (params != null) {
       return JSON.stringify(params);
     }
-    return "";
+    return JSON.stringify({});
   }
 }
