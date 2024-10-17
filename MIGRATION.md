@@ -5,7 +5,7 @@
 This breaking change modifies the signature to loadEntity, storeEntity, and cloneEntity. Instead of multiple individual
 parameters, an object is now accepted allowing easier configuration only the options you need. New file parameters
 have been added to support different sets of options based on the type of file. The contained entity and filename
-escape parameters for `caml` files have been moved to this new fileParams parameter.
+escape parameters for `caml` files have been moved to the new fileParams parameter.
 
 ```ts
 import { initRuntime } from "@howso/amalgam-lang";

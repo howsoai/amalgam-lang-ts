@@ -75,6 +75,21 @@ describe("Test Amalgam Runtime ST", () => {
     }
   });
 
+  test("store entity", async () => {
+    // Test cloning entities
+    try {
+      const status1 = amlg.loadEntity({ handle: "store_test", filePath: "entity.amlg" });
+      expect(status1.loaded).toEqual(true);
+      amlg.storeEntity({ handle: "store_test", filePath: "new_entity.amlg" });
+      const files = amlg.runtime.FS.readdir("/");
+      expect(files).toContain("entity.amlg");
+      expect(files).toContain("new_entity.amlg");
+    } finally {
+      // cleanup loaded entities
+      amlg.destroyEntity("store_test");
+    }
+  });
+
   test("execute entity json", async () => {
     // Test execute entity json
     try {
