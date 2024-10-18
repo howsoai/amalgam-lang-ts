@@ -21,7 +21,7 @@ export default {
     copy({
       targets: [
         {
-          src: ["src/webassembly/amalgam-st.data", "src/webassembly/amalgam-st.wasm"],
+          src: ["src/webassembly/amalgam-st*"],
           dest: "lib",
         },
       ],

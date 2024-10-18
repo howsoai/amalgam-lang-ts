@@ -44,7 +44,7 @@ describe("Test Amalgam Runtime ST", () => {
   test("load entity", async () => {
     // Test load entity status response
     try {
-      const status = amlg.loadEntity("load_test", "entity.amlg");
+      const status = amlg.loadEntity({ handle: "load_test", filePath: "entity.amlg" });
       expect(typeof status.loaded).toBe("boolean");
       expect(status.loaded).toEqual(true);
       expect(typeof status.message).toBe("string");
@@ -59,9 +59,9 @@ describe("Test Amalgam Runtime ST", () => {
   test("clone entity", async () => {
     // Test cloning entities
     try {
-      const status1 = amlg.loadEntity("entity_1", "entity.amlg");
+      const status1 = amlg.loadEntity({ handle: "entity_1", filePath: "entity.amlg" });
       expect(status1.loaded).toEqual(true);
-      const status2 = amlg.cloneEntity("entity_1", "entity_2");
+      const status2 = amlg.cloneEntity({ handle: "entity_1", cloneHandle: "entity_2" });
       expect(status2).toEqual(true);
       const entities = amlg.getEntities();
       expect(Array.isArray(entities)).toBe(true);
@@ -75,10 +75,25 @@ describe("Test Amalgam Runtime ST", () => {
     }
   });
 
+  test("store entity", async () => {
+    // Test cloning entities
+    try {
+      const status1 = amlg.loadEntity({ handle: "store_test", filePath: "entity.amlg" });
+      expect(status1.loaded).toEqual(true);
+      amlg.storeEntity({ handle: "store_test", filePath: "new_entity.amlg" });
+      const files = amlg.runtime.FS.readdir("/");
+      expect(files).toContain("entity.amlg");
+      expect(files).toContain("new_entity.amlg");
+    } finally {
+      // cleanup loaded entities
+      amlg.destroyEntity("store_test");
+    }
+  });
+
   test("execute entity json", async () => {
     // Test execute entity json
     try {
-      amlg.loadEntity("execute_test", "entity.amlg");
+      amlg.loadEntity({ handle: "execute_test", filePath: "entity.amlg" });
       // This label should reply with what is input
       const result = amlg.executeEntityJson("execute_test", "echo", { foo: 123 });
       expect(result).toEqual({ foo: 123 });
@@ -91,7 +106,7 @@ describe("Test Amalgam Runtime ST", () => {
   test("json label", async () => {
     // Test setting and getting label json
     try {
-      amlg.loadEntity("label_test", "entity.amlg");
+      amlg.loadEntity({ handle: "label_test", filePath: "entity.amlg" });
       // Test string value
       expect(amlg.getJsonFromLabel("label_test", "test_string")).toBe("abc123");
       // Test updating number value
@@ -115,7 +130,7 @@ describe("Test Amalgam Runtime ST", () => {
       expect(entities.length).toBe(0);
 
       // Load an entity and check response contains it
-      amlg.loadEntity("tester", "entity.amlg");
+      amlg.loadEntity({ handle: "tester", filePath: "entity.amlg" });
       entities = amlg.getEntities();
       expect(Array.isArray(entities)).toBe(true);
       expect(entities.length).toBe(1);

@@ -3,24 +3,25 @@ import { AmalgamTrace } from "./trace";
 export interface AmalgamModule {
   loadEntity(
     handle: string,
-    uri: string,
+    filePath: string,
+    fileType: string,
     persistent: boolean,
-    loadContainedEntities: boolean,
-    escapeFilename: boolean,
-    escapeContainedFilenames: boolean,
+    fileParams: string,
     writeLog: string,
     printLog: string,
   ): EntityStatus;
   cloneEntity(
     handle: string,
     cloneHandle: string,
-    amlgPath: string,
-    persist: boolean,
+    filePath: string,
+    fileType: string,
+    persistent: boolean,
+    fileParams: string,
     writeLog: string,
     printLog: string,
   ): boolean;
-  verifyEntity(uri: string): EntityStatus;
-  storeEntity(handle: string, uri: string, updatePersistenceLocation?: boolean, storeContainedEntities?: boolean): void;
+  verifyEntity(filePath: string): EntityStatus;
+  storeEntity(handle: string, filePath: string, fileType: string, persistent: boolean, fileParams: string): void;
   executeEntity(handle: string, label: string): void;
   executeEntityJson(handle: string, label: string, json: string): string;
   destroyEntity(handle: string): void;
@@ -47,6 +48,49 @@ export interface AmalgamOptions {
   sbfDatastoreEnabled?: boolean;
 }
 
+/** Base options for entity files.  */
+export type EntityFileOptions = {
+  /** The path to the entity file. */
+  filePath: string;
+  /** The type of file. Defaults to using file extension if not set. */
+  fileType?: string;
+  /**
+   * A mapping of key-value pairs which are parameters specific to the file type.
+   * See Amalgam documentation for details of allowed parameters.
+   */
+  fileParams?: Record<string, unknown>;
+  /** If true, all transactions will trigger the entity to be persisted at the source file path. */
+  persistent?: boolean;
+};
+
+/** Parameters for loadEntity. */
+export type LoadEntityOptions = EntityFileOptions & {
+  /** A unique handle to assign to this entity. */
+  handle: string;
+  /** File path for writing a write log. */
+  writeLog?: string;
+  /** File path for writing a print log. */
+  printLog?: string;
+};
+
+/** Parameters for storeEntity. */
+export type StoreEntityOptions = EntityFileOptions & {
+  /** The entity handle. */
+  handle: string;
+};
+
+/** Parameters for cloneEntity. */
+export type CloneEntityOptions = Partial<EntityFileOptions> & {
+  /** The source entity handle. */
+  handle: string;
+  /** The cloned entity handle. */
+  cloneHandle: string;
+  /** File path for writing a write log. */
+  writeLog?: string;
+  /** File path for writing a print log. */
+  printLog?: string;
+};
+
 export class Amalgam<T extends AmalgamModule = AmalgamModule> {
   private readonly trace: AmalgamTrace;
 
@@ -69,108 +113,86 @@ export class Amalgam<T extends AmalgamModule = AmalgamModule> {
    */
   public getVersion(): string {
     const version = this.runtime.getVersion();
-    this.trace.log_comment("VERSION >", version);
+    this.trace.logComment("VERSION >", version);
     return version;
   }
 
   /**
    * Load an entity from file.
-   * @param handle The handle to use for the entity.
-   * @param uri The file path to the entity.
-   * @param persistent If true, all transactions will trigger the entity to be persisted at the source uri.
-   * @param loadContainedEntities If set to true, contained entities will be loaded.
-   * @param escapeFilename If set to true, the file name will be aggressively escaped.
-   * @param escapeContainedFilenames If set to true, file names of contained entities will be aggressively escaped.
-   * @param writeLog File path for writing a write log. Empty string disables this feature.
-   * @param printLog File path for writing a print log. Empty string disables this feature.
+   * @param options The load parameters.
    * @returns True if the entity was loaded successfully.
    */
-  public loadEntity(
-    handle: string,
-    uri: string,
-    persistent = false,
-    loadContainedEntities = false,
-    escapeFilename = false,
-    escapeContainedFilenames = false,
-    writeLog = "",
-    printLog = "",
-  ): EntityStatus {
-    this.trace.log_command(
-      "LOAD_ENTITY",
-      handle,
-      uri,
-      persistent,
-      loadContainedEntities,
-      escapeFilename,
-      escapeContainedFilenames,
-      writeLog,
-      printLog,
-    );
-    const result = this.runtime.loadEntity(
-      handle,
-      uri,
-      persistent,
-      loadContainedEntities,
-      escapeFilename,
-      escapeContainedFilenames,
-      writeLog,
-      printLog,
-    );
-    this.trace.log_reply(result);
+  public loadEntity(options: LoadEntityOptions): EntityStatus {
+    const { handle, filePath, fileType = "", persistent = false, writeLog = "", printLog = "" } = options;
+    const fileParams = this.serializeParams(options.fileParams);
+    this.trace.logCommand("LOAD_ENTITY", handle, filePath, fileType, persistent, fileParams, writeLog, printLog);
+    const result = this.runtime.loadEntity(handle, filePath, fileType, persistent, fileParams, writeLog, printLog);
+    this.trace.logReply(result);
     return result;
   }
 
   /**
    * Verify an entity from an Amalgam source file.
-   * @param uri The file path to the entity.
+   * @param filePath The file path to the entity.
    * @returns The status of the entity.
    */
-  public verifyEntity(uri: string): EntityStatus {
-    this.trace.log_command("VERIFY_ENTITY", uri);
-    const result = this.runtime.verifyEntity(uri);
-    this.trace.log_reply(result);
+  public verifyEntity(filePath: string): EntityStatus {
+    this.trace.logCommand("VERIFY_ENTITY", filePath);
+    const result = this.runtime.verifyEntity(filePath);
+    this.trace.logReply(result);
     return result;
   }
 
   /**
    * Clone an existing entity to a new handle.
-   * @param handle The source entity handle.
-   * @param cloneHandle The new entity handle.
-   * @param uri A file path to persist the new entity to. Ignored unless persistent is true.
-   * @param persistent If true, all transactions will trigger the entity to be persisted at the given uri.
-   * @param writeLog File path for writing a write log. An empty string disables this feature.
-   * @param printLog File path for writing a print log. An empty string disables this feature.
+   * @param options The clone parameters.
    * @returns True if the entity was cloned successfully.
    */
-  public cloneEntity(
-    handle: string,
-    cloneHandle: string,
-    uri = "",
-    persistent = false,
-    writeLog = "",
-    printLog = "",
-  ): boolean {
-    this.trace.log_command("CLONE_ENTITY", handle, cloneHandle, uri, persistent, writeLog, printLog);
-    const result = this.runtime.cloneEntity(handle, cloneHandle, uri, persistent, writeLog, printLog);
-    this.trace.log_reply(result);
+  public cloneEntity(options: CloneEntityOptions): boolean {
+    const {
+      handle,
+      cloneHandle,
+      filePath = "",
+      fileType = "",
+      persistent = false,
+      writeLog = "",
+      printLog = "",
+    } = options;
+    const fileParams = this.serializeParams(options.fileParams);
+    this.trace.logCommand(
+      "CLONE_ENTITY",
+      handle,
+      cloneHandle,
+      filePath,
+      fileType,
+      persistent,
+      fileParams,
+      writeLog,
+      printLog,
+    );
+    const result = this.runtime.cloneEntity(
+      handle,
+      cloneHandle,
+      filePath,
+      fileType,
+      persistent,
+      fileParams,
+      writeLog,
+      printLog,
+    );
+    this.trace.logReply(result);
     return result;
   }
 
   /**
    * Store an entity to file.
-   * @param handle The handle of the entity.
-   * @param uri The file path to persist to.
-   * @param updatePersistenceLocation If true, updates location entity is persisted to.
-   * @param storeContainedEntities If true, contained entities will also be persisted.
+   * @param options The store parameters.
    */
-  public storeEntity(
-    handle: string,
-    uri: string,
-    updatePersistenceLocation = false,
-    storeContainedEntities = true,
-  ): void {
-    this.trace.log_comment("CALL > StoreEntity");
-    this.runtime.storeEntity(handle, uri, updatePersistenceLocation, storeContainedEntities);
+  public storeEntity(options: StoreEntityOptions): void {
+    const { handle, filePath, fileType = "", persistent = false } = options;
+    const fileParams = this.serializeParams(options.fileParams);
+    this.trace.logCommand("STORE_ENTITY", handle, filePath, fileType, persistent, fileParams);
+    this.runtime.storeEntity(handle, filePath, fileType, persistent, fileParams);
   }
 
   /**
@@ -179,7 +201,7 @@ export class Amalgam<T extends AmalgamModule = AmalgamModule> {
    * @param label The label to execute.
    */
   public executeEntity(handle: string, label: string): void {
-    this.trace.log_comment("CALL > ExecuteEntity");
+    this.trace.logComment("CALL > ExecuteEntity");
     this.runtime.executeEntity(handle, label);
   }
 
@@ -192,11 +214,11 @@ export class Amalgam<T extends AmalgamModule = AmalgamModule> {
    */
   public executeEntityJson<D = unknown, R = unknown>(handle: string, label: string, data: D): R | null {
     const payload = JSON.stringify(data ?? null);
-    this.trace.log_time("EXECUTION START");
-    this.trace.log_command("EXECUTE_ENTITY_JSON", handle, label, payload);
+    this.trace.logTime("EXECUTION START");
+    this.trace.logCommand("EXECUTE_ENTITY_JSON", handle, label, payload);
     const result = this.runtime.executeEntityJson(handle, label, payload);
-    this.trace.log_time("EXECUTION STOP");
-    this.trace.log_reply(result);
+    this.trace.logTime("EXECUTION STOP");
+    this.trace.logReply(result);
     if (!result) return null;
     return JSON.parse(result);
   }
@@ -206,7 +228,7 @@ export class Amalgam<T extends AmalgamModule = AmalgamModule> {
    * @param handle The entity handle.
    */
   public destroyEntity(handle: string): void {
-    this.trace.log_comment("CALL > DestroyEntity");
+    this.trace.logComment("CALL > DestroyEntity");
     this.runtime.destroyEntity(handle);
   }
 
@@ -215,7 +237,7 @@ export class Amalgam<T extends AmalgamModule = AmalgamModule> {
    * @returns A list of entity handles.
    */
   public getEntities(): string[] {
-    this.trace.log_comment("CALL > GetEntities");
+    this.trace.logComment("CALL > GetEntities");
     return this.runtime.getEntities();
   }
 
@@ -226,9 +248,9 @@ export class Amalgam<T extends AmalgamModule = AmalgamModule> {
    * @returns True if the set was successful.
    */
   public setRandomSeed(handle: string, seed: string): boolean {
-    this.trace.log_command("SET_RANDOM_SEED", seed);
+    this.trace.logCommand("SET_RANDOM_SEED", seed);
     const result = this.runtime.setRandomSeed(handle, seed);
-    this.trace.log_reply(result);
+    this.trace.logReply(result);
     return result;
   }
 
@@ -240,7 +262,7 @@ export class Amalgam<T extends AmalgamModule = AmalgamModule> {
    */
   public setJsonToLabel<D = unknown>(handle: string, label: string, data: D): void {
     const payload = JSON.stringify(data ?? null);
-    this.trace.log_command("SET_JSON_TO_LABEL", handle, label, payload);
+    this.trace.logCommand("SET_JSON_TO_LABEL", handle, label, payload);
     this.runtime.setJsonToLabel(handle, label, payload);
   }
 
@@ -251,9 +273,9 @@ export class Amalgam<T extends AmalgamModule = AmalgamModule> {
    * @returns The label data.
    */
   public getJsonFromLabel<R = unknown>(handle: string, label: string): R | null {
-    this.trace.log_command("GET_JSON_FROM_LABEL", handle, label);
+    this.trace.logCommand("GET_JSON_FROM_LABEL", handle, label);
     const result = this.runtime.getJsonFromLabel(handle, label);
-    this.trace.log_reply(result);
+    this.trace.logReply(result);
     if (!result) return null;
     return JSON.parse(result);
   }
@@ -296,5 +318,17 @@ export class Amalgam<T extends AmalgamModule = AmalgamModule> {
    */
   public getConcurrencyType(): string {
     return this.runtime.getConcurrencyType();
+  }
+
+  /**
+   * Serialize JSON parameter value for passing to Amalgam runtime.
+   * @param params The parameters to serialize.
+   * @returns The stringified parameter value.
+   */
+  protected serializeParams(params: Record<string, unknown> | null | undefined): string {
+    if (params != null) {
+      return JSON.stringify(params);
+    }
+    return JSON.stringify(null);
   }
 }

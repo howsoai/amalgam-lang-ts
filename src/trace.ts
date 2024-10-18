@@ -1,35 +1,47 @@
 export class AmalgamTrace {
-  constructor(public enabled: boolean) {}
+  constructor(
+    public enabled: boolean,
+    public logger: (...msg: string[]) => void = console.log,
+  ) {}
 
   public log(...msg: string[]): void {
     if (this.enabled) {
-      console.log(...msg);
+      this.logger(...msg);
     }
   }
 
-  public log_time(label: string): void {
+  public logTime(label: string): void {
     if (this.enabled) {
       const timestamp = new Date();
       this.log(`# TIME ${label} ${timestamp.toISOString()}`);
     }
   }
 
-  public log_comment(...comments: string[]): void {
+  public logComment(...comments: string[]): void {
     if (this.enabled) {
       this.log("#", ...comments);
     }
   }
 
-  public log_reply(reply: unknown): void {
+  public logReply(reply: unknown): void {
     if (this.enabled) {
       this.log("# REPLY >", JSON.stringify(reply));
     }
   }
 
-  public log_command(type: AmalgamTraceCommand, ...parts: unknown[]): void {
+  public logCommand(type: AmalgamTraceCommand, ...parts: unknown[]): void {
     if (this.enabled) {
-      this.log(type, ...parts.map((p) => String(p)));
+      this.log(type, ...parts.map(this.serializePart));
     }
+  }
+
+  protected serializePart(part: unknown) {
+    if (part == null || ["number", "string", "boolean"].includes(typeof part)) {
+      return JSON.stringify(part);
+    }
+    // If we have an object we need to serialize it twice so its wrapped in
+    // quotes and inner quotes are escaped
+    return JSON.stringify(JSON.stringify(part));
   }
 }
 
@@ -37,6 +49,7 @@ export type AmalgamTraceCommand =
   | "LOAD_ENTITY"
   | "VERIFY_ENTITY"
   | "CLONE_ENTITY"
+  | "STORE_ENTITY"
   | "EXECUTE_ENTITY_JSON"
   | "SET_JSON_TO_LABEL"
   | "GET_JSON_FROM_LABEL"
