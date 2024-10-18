@@ -225,10 +225,10 @@ export class Amalgam<T extends AmalgamModule = AmalgamModule> {
    * @returns The result of the label execution.
    */
   public executeEntityJson<D = unknown, R = unknown>(handle: string, label: string, data: D): R | null {
-    const payload = JSON.stringify(data ?? null);
+    const payload = data ?? null;
     this.trace.logTime("EXECUTION START");
     this.trace.logCommand("EXECUTE_ENTITY_JSON", handle, label, payload);
-    const result = this.runtime.executeEntityJson(handle, label, payload);
+    const result = this.runtime.executeEntityJson(handle, label, JSON.stringify(payload));
     this.trace.logTime("EXECUTION STOP");
     this.trace.logReply(result);
     if (!result) return null;
@@ -273,9 +273,9 @@ export class Amalgam<T extends AmalgamModule = AmalgamModule> {
    * @param data The data to assign to the label.
    */
   public setJsonToLabel<D = unknown>(handle: string, label: string, data: D): void {
-    const payload = JSON.stringify(data ?? null);
+    const payload = data ?? null;
     this.trace.logCommand("SET_JSON_TO_LABEL", handle, label, payload);
-    this.runtime.setJsonToLabel(handle, label, payload);
+    this.runtime.setJsonToLabel(handle, label, JSON.stringify(payload));
   }
 
   /**
