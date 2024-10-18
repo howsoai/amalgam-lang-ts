@@ -1,38 +1,27 @@
+import { Logger, nullLogger } from "./utilities";
+
 export class AmalgamTrace {
-  constructor(
-    public enabled: boolean,
-    public logger: (...msg: string[]) => void = console.log,
-  ) {}
+  constructor(protected readonly logger: Logger = nullLogger) {}
 
   public log(...msg: string[]): void {
-    if (this.enabled) {
-      this.logger(...msg);
-    }
+    this.logger.info(...msg);
   }
 
   public logTime(label: string): void {
-    if (this.enabled) {
-      const timestamp = new Date();
-      this.log(`# TIME ${label} ${timestamp.toISOString()}`);
-    }
+    const timestamp = new Date();
+    this.logger.debug(`# TIME ${label} ${timestamp.toISOString()}`);
   }
 
   public logComment(...comments: string[]): void {
-    if (this.enabled) {
-      this.log("#", ...comments);
-    }
+    this.logger.debug("#", ...comments);
   }
 
   public logReply(reply: unknown): void {
-    if (this.enabled) {
-      this.log("# REPLY >", JSON.stringify(reply));
-    }
+    this.logger.debug("# REPLY >", JSON.stringify(reply));
   }
 
   public logCommand(type: AmalgamTraceCommand, ...parts: unknown[]): void {
-    if (this.enabled) {
-      this.log(type, ...parts.map(this.serializePart));
-    }
+    this.logger.debug(type, ...parts.map(this.serializePart));
   }
 
   protected serializePart(part: unknown) {

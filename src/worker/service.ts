@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-interface */
 import { Amalgam, AmalgamModule, type AmalgamOptions } from "../api";
 import { AmalgamError } from "../errors";
+import { Logger, nullLogger } from "../utilities";
 import { isRequest, MessageEventLike, ProtocolMessage, Request, Response } from "./messages";
 
 export type AmalgamOperation =
@@ -87,17 +88,20 @@ export function isAmalgamOperation(command: string): command is AmalgamOperation
 }
 
 export interface AmalgamWorkerServiceOptions {
-  debug?: boolean;
+  logger?: Logger;
 }
 
 export class AmalgamWorkerService<T extends AmalgamModule = AmalgamModule> {
   protected amlg?: Amalgam<T>;
   protected initialized = false;
+  protected logger: Logger;
 
   constructor(
     protected readonly initializer: (options?: AmalgamOptions) => Promise<Amalgam<T>>,
-    protected readonly options: AmalgamWorkerServiceOptions = {},
-  ) {}
+    protected readonly options: AmalgamWorkerServiceOptions,
+  ) {
+    this.logger = options.logger || nullLogger;
+  }
 
   /**
    * Dispatch a message.
@@ -138,9 +142,7 @@ export class AmalgamWorkerService<T extends AmalgamModule = AmalgamModule> {
    * @param channel The message channel.
    */
   public sendError(error: Error | string, request: Request | null, channel: MessagePort): void {
-    if (this.options.debug) {
-      console.error(error);
-    }
+    this.logger.error(error);
 
     let instance: AmalgamError;
     if (error instanceof AmalgamError) {

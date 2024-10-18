@@ -1,4 +1,5 @@
 import { AmalgamTrace } from "./trace";
+import { Logger, nullLogger } from "./utilities";
 
 export interface AmalgamModule {
   loadEntity(
@@ -44,8 +45,8 @@ export interface EntityStatus {
 }
 
 export interface AmalgamOptions {
-  trace?: boolean | AmalgamTrace;
   sbfDatastoreEnabled?: boolean;
+  logger?: Logger;
 }
 
 /** Base options for entity files.  */
@@ -93,17 +94,15 @@ export type CloneEntityOptions = Partial<EntityFileOptions> & {
 
 export class Amalgam<T extends AmalgamModule = AmalgamModule> {
   private readonly trace: AmalgamTrace;
+  private readonly logger: Logger;
 
   constructor(
     readonly runtime: T,
     readonly options: AmalgamOptions = {},
   ) {
-    const { sbfDatastoreEnabled = true, trace = false } = options;
-    if (trace == null || typeof trace === "boolean") {
-      this.trace = new AmalgamTrace(trace);
-    } else {
-      this.trace = trace;
-    }
+    this.logger = options.logger || nullLogger;
+    const { sbfDatastoreEnabled = true } = options;
+    this.trace = new AmalgamTrace(this.logger);
     this.setSBFDatastoreEnabled(sbfDatastoreEnabled);
   }
 
