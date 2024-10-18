@@ -25,7 +25,7 @@ export class AmalgamTrace {
 
   public logReply(reply: unknown): void {
     if (this.enabled) {
-      this.log("# REPLY >", JSON.stringify(reply));
+      this.log("# RESULT >b'" + JSON.stringify(reply) + "'");
     }
   }
 
@@ -35,13 +35,9 @@ export class AmalgamTrace {
     }
   }
 
-  protected serializePart(part: unknown) {
-    if (part == null || ["number", "string", "boolean"].includes(typeof part)) {
-      return JSON.stringify(part);
-    }
-    // If we have an object we need to serialize it twice so its wrapped in
-    // quotes and inner quotes are escaped
-    return JSON.stringify(JSON.stringify(part));
+  protected serializePart(part: unknown): string {
+    if (part == null) return "null";
+    return JSON.stringify(part);
   }
 }
 

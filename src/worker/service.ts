@@ -147,6 +147,7 @@ export class AmalgamWorkerService<T extends AmalgamModule = AmalgamModule> {
       instance = error;
     } else if (error instanceof Error) {
       instance = new AmalgamError(error.message);
+      instance.stack = error.stack;
     } else {
       instance = new AmalgamError(String(error));
     }

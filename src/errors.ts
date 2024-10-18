@@ -14,7 +14,7 @@ export class AmalgamError extends Error {
   }
 
   serialize() {
-    return { detail: this.detail, code: this.code, name: this.name };
+    return { detail: this.detail, code: this.code, name: this.name, stack: this.stack };
   }
 }
 
