@@ -45,6 +45,8 @@ export interface EntityStatus {
 }
 
 export interface AmalgamOptions {
+  /** A default AmalgamTrace will be created automatically, respecting the boolean value if not supplied using the logger.debug method */
+  trace?: boolean | AmalgamTrace;
   sbfDatastoreEnabled?: boolean;
   logger?: Logger;
 }
@@ -94,15 +96,19 @@ export type CloneEntityOptions = Partial<EntityFileOptions> & {
 
 export class Amalgam<T extends AmalgamModule = AmalgamModule> {
   private readonly trace: AmalgamTrace;
-  private readonly logger: Logger;
+  protected readonly logger: Logger;
 
   constructor(
     readonly runtime: T,
     readonly options: AmalgamOptions = {},
   ) {
     this.logger = options.logger || nullLogger;
-    const { sbfDatastoreEnabled = true } = options;
-    this.trace = new AmalgamTrace(this.logger);
+    const { sbfDatastoreEnabled = true, trace = false } = options;
+    if (trace == null || typeof trace === "boolean") {
+      this.trace = new AmalgamTrace(trace, this.logger.debug);
+    } else {
+      this.trace = trace;
+    }
     this.setSBFDatastoreEnabled(sbfDatastoreEnabled);
   }
 

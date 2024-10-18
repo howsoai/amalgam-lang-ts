@@ -3,7 +3,7 @@ import path from "node:path";
 import { describe, expect, test, beforeAll } from "@jest/globals";
 import { initRuntime } from "./runtime";
 import server from "semver";
-import { Logger } from "../utilities";
+import { type Logger } from "../utilities";
 
 const AMALGAM_WASM_DIR = "./src/webassembly/";
 const TESTS_DIR = "./tests/";
@@ -177,16 +177,5 @@ describe("Test Amalgam Runtime ST", () => {
     const value = amlg.getMaxNumThreads();
     expect(typeof value).toBe("number");
     expect(value).toEqual(1);
-  });
-
-  test("log methods are called", () => {
-    const version = amlg.getVersion();
-    expect(typeof version).toBe("string");
-
-    expect(logger.error).not.toHaveBeenCalled();
-    expect(logger.warn).not.toHaveBeenCalled();
-    expect(logger.info).not.toHaveBeenCalled();
-
-    expect(logger.debug).toHaveBeenLastCalledWith("#", "VERSION >", "55.0.1");
   });
 });
