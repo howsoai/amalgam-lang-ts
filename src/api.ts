@@ -45,9 +45,16 @@ export interface EntityStatus {
 }
 
 export interface AmalgamOptions {
-  /** A default AmalgamTrace will be created automatically, respecting the boolean value if not supplied using the logger.debug method */
+  /**
+   * This options may be used to create a custom AmalgamTrace handler, such as a file logger.
+   * If not supplied an AmalgamTrace will be created automatically and enabled only if true.
+   * This automatic logger will use the `logger` option's `debug` method automatically. */
   trace?: boolean | AmalgamTrace;
   sbfDatastoreEnabled?: boolean;
+  /**
+   * A common set of logging interfaces. For most applications, simple `console` may suffice.
+   * Default: A set of null functions.
+   */
   logger?: Logger;
 }
 
