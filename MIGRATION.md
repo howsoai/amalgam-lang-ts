@@ -27,7 +27,7 @@ import wasmUri from "@howso/amalgam-lang/lib/amalgam-st.wasm?url";
           return self.location.href + path;
         },
       },
-      { logger: { ...console, debug: () => {} } },
+      { logger: console },
     );
   });
   self.onmessage = async (ev) => {
