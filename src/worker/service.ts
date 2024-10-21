@@ -98,7 +98,7 @@ export class AmalgamWorkerService<T extends AmalgamModule = AmalgamModule> {
 
   constructor(
     protected readonly initializer: (options?: AmalgamOptions) => Promise<Amalgam<T>>,
-    protected readonly options: AmalgamWorkerServiceOptions,
+    protected readonly options: AmalgamWorkerServiceOptions = {},
   ) {
     this.logger = options.logger || nullLogger;
   }
