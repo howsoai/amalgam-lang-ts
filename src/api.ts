@@ -46,7 +46,7 @@ export interface EntityStatus {
 
 export interface AmalgamOptions {
   /**
-   * This options may be used to create a custom AmalgamTrace handler, such as a file logger.
+   * This option may be used to create a custom AmalgamTrace handler, such as a file logger.
    * If not supplied an AmalgamTrace will be created automatically and enabled only if true.
    * This automatic logger will use the `logger` option's `debug` method automatically. */
   trace?: boolean | AmalgamTrace;
