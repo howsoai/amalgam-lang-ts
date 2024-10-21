@@ -2,6 +2,8 @@
 
 Provides a package around [@howso/amalgam](https://github.com/howsoai/amalgam) releases.
 
+Amalgam version: [55.0.2](https://github.com/howsoai/amalgam/releases/tag/55.0.2)
+
 ## Usage
 
 ```bash
@@ -20,17 +22,21 @@ import wasmUri from "@howso/amalgam-lang/lib/amalgam-st.wasm?url";
 
 (async function () {
   const svc = new AmalgamWasmService((options) => {
-    return initRuntime(options, {
-      locateFile: (path: string) => {
-        // Override file paths so we can use hashed version in build
-        if (path.endsWith("amalgam-st.wasm")) {
-          return wasmUri;
-        } else if (path.endsWith("amalgam-st.data")) {
-          return wasmDataUri;
-        }
-        return self.location.href + path;
+    return initRuntime(
+      options,
+      {
+        locateFile: (path: string) => {
+          // Override file paths so we can use hashed version in build
+          if (path.endsWith("amalgam-st.wasm")) {
+            return wasmUri;
+          } else if (path.endsWith("amalgam-st.data")) {
+            return wasmDataUri;
+          }
+          return self.location.href + path;
+        },
       },
-    });
+      { logger: console },
+    );
   });
   self.onmessage = async (ev) => {
     svc.dispatch(ev);

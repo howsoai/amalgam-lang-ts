@@ -1,5 +1,42 @@
 # Migration guide
 
+## 57.0.0
+
+Debugging initialization options have changed. You may now pass any `Logger` shaped object when initializing
+to provide additional handling. It's methods will be called automatically.
+
+For simple applications, replacing `{logger: console}` may be sufficient as in the following:
+
+```ts
+import { AmalgamWasmService, initRuntime } from "@howso/amalgam-lang";
+import wasmDataUri from "@howso/amalgam-lang/lib/amalgam-st.data?url";
+import wasmUri from "@howso/amalgam-lang/lib/amalgam-st.wasm?url";
+
+(async function () {
+  const svc = new AmalgamWasmService((options) => {
+    return initRuntime(
+      options,
+      {
+        locateFile: (path: string) => {
+          // Override file paths so we can use hashed version in build
+          if (path.endsWith("amalgam-st.wasm")) {
+            return wasmUri;
+          } else if (path.endsWith("amalgam-st.data")) {
+            return wasmDataUri;
+          }
+          return self.location.href + path;
+        },
+      },
+      { logger: console },
+    );
+  });
+  self.onmessage = async (ev) => {
+    svc.dispatch(ev);
+  };
+  self.postMessage({ type: "event", event: "ready" });
+})();
+```
+
 ## 56.0.0
 
 This breaking change modifies the signature to loadEntity, storeEntity, and cloneEntity. Instead of multiple individual
@@ -11,19 +48,18 @@ escape parameters for `caml` files have been moved to the new fileParams paramet
 import { initRuntime } from "@howso/amalgam-lang";
 const amlg = await initRuntime();
 await amlg.loadEntity({
-    handle: "my-handle",
-    filePath: "filename.caml",
-    // The properties below are optional:
-    fileType: "caml",  // defaults to file extension
-    fileParams: {transactional: true},
-    persistent: false,
-    writeLog: "write.log",
-    printLog: "print.log",
+  handle: "my-handle",
+  filePath: "filename.caml",
+  // The properties below are optional:
+  fileType: "caml", // defaults to file extension
+  fileParams: { transactional: true },
+  persistent: false,
+  writeLog: "write.log",
+  printLog: "print.log",
 });
 ```
 
 Additionally, functions of the class `AmalgamTrace` have been re-named, changing from snake case to camel case.
-
 
 ## 55.0.0
 

@@ -1,4 +1,5 @@
 import { AmalgamTrace } from "./trace";
+import { Logger, nullLogger } from "./utilities";
 
 export interface AmalgamModule {
   loadEntity(
@@ -44,8 +45,17 @@ export interface EntityStatus {
 }
 
 export interface AmalgamOptions {
+  /**
+   * This option may be used to create a custom AmalgamTrace handler, such as a file logger.
+   * If not supplied an AmalgamTrace will be created automatically and enabled only if true.
+   * This automatic logger will use the `logger` option's `debug` method automatically. */
   trace?: boolean | AmalgamTrace;
   sbfDatastoreEnabled?: boolean;
+  /**
+   * A common set of logging interfaces. For most applications, simple `console` may suffice.
+   * Default: A set of null functions.
+   */
+  logger?: Logger;
 }
 
 /** Base options for entity files.  */
@@ -93,14 +103,16 @@ export type CloneEntityOptions = Partial<EntityFileOptions> & {
 
 export class Amalgam<T extends AmalgamModule = AmalgamModule> {
   private readonly trace: AmalgamTrace;
+  protected readonly logger: Logger;
 
   constructor(
     readonly runtime: T,
     readonly options: AmalgamOptions = {},
   ) {
+    this.logger = options.logger || nullLogger;
     const { sbfDatastoreEnabled = true, trace = false } = options;
     if (trace == null || typeof trace === "boolean") {
-      this.trace = new AmalgamTrace(trace);
+      this.trace = new AmalgamTrace(trace, this.logger.debug);
     } else {
       this.trace = trace;
     }

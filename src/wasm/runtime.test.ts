@@ -3,27 +3,38 @@ import path from "node:path";
 import { describe, expect, test, beforeAll } from "@jest/globals";
 import { initRuntime } from "./runtime";
 import server from "semver";
+import { type Logger } from "../utilities";
 
 const AMALGAM_WASM_DIR = "./src/webassembly/";
 const TESTS_DIR = "./tests/";
 
 describe("Test Amalgam Runtime ST", () => {
   let amlg: Awaited<ReturnType<typeof initRuntime>>;
+  let logger: Logger;
 
   beforeAll(async () => {
+    const error = jest.fn();
+    const warn = jest.fn();
+    const info = jest.fn();
+    const debug = jest.fn();
+    logger = { error, warn, info, debug };
+
     // Setup AmalgamRuntime
-    amlg = await initRuntime(undefined, {
-      wasmBinary: fs.readFileSync(path.resolve(AMALGAM_WASM_DIR, "amalgam-st.wasm")),
-      getPreloadedPackage: function (packagePath) {
-        // Manually load package data from file system
-        const data = fs.readFileSync(packagePath);
-        return data.buffer;
+    amlg = await initRuntime(
+      { logger },
+      {
+        wasmBinary: fs.readFileSync(path.resolve(AMALGAM_WASM_DIR, "amalgam-st.wasm")),
+        getPreloadedPackage: function (packagePath) {
+          // Manually load package data from file system
+          const data = fs.readFileSync(packagePath);
+          return data.buffer;
+        },
+        locateFile: function (filepath) {
+          // Override the local file method to use local file system
+          return path.resolve(AMALGAM_WASM_DIR, filepath);
+        },
       },
-      locateFile: function (filepath) {
-        // Override the local file method to use local file system
-        return path.resolve(AMALGAM_WASM_DIR, filepath);
-      },
-    });
+    );
     // Prepare amalgam entity test file in virtual filesystem at root
     const entity = fs.readFileSync(path.resolve(TESTS_DIR, "entity.amlg"));
     amlg.runtime.FS.createDataFile("", "entity.amlg", entity, true, false, false);
