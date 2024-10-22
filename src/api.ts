@@ -103,7 +103,7 @@ export type CloneEntityOptions = Partial<EntityFileOptions> & {
 
 export class Amalgam<T extends AmalgamModule = AmalgamModule> {
   private readonly trace: AmalgamTrace;
-  protected readonly logger: Logger;
+  public readonly logger: Logger;
 
   constructor(
     readonly runtime: T,
