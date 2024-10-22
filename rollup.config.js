@@ -1,7 +1,6 @@
 import typescript from "@rollup/plugin-typescript";
 import copy from "rollup-plugin-copy";
 import commonjs from "@rollup/plugin-commonjs";
-import terser from "@rollup/plugin-terser";
 import pkg from "./package.json" with { type: "json" };
 
 /**
@@ -26,7 +25,6 @@ export default {
         },
       ],
     }),
-    terser(), // minifies generated bundles
   ],
   external: [
     ...Object.keys(pkg.dependencies || {}),
