@@ -19,30 +19,30 @@ describe("Amalgam runtime single threaded", () => {
         amlg = await getRuntime({});
         expect(amlg).toBeInstanceOf(Amalgam);
       });
-    });
 
-    it("should log all levels back to the provided interface", async () => {
-      const error = jest.fn();
-      const errorValue = [Math.random(), Math.random()];
-      const warn = jest.fn();
-      const warnValue = [Math.random(), Math.random()];
-      const info = jest.fn();
-      const infoValue = [Math.random(), Math.random()];
-      const debug = jest.fn();
-      const debugValue = [Math.random(), Math.random()];
-      const logger = { error, warn, info, debug };
+      it("should log all levels back to the provided interface", async () => {
+        const error = jest.fn();
+        const errorValue = [Math.random(), Math.random()];
+        const warn = jest.fn();
+        const warnValue = [Math.random(), Math.random()];
+        const info = jest.fn();
+        const infoValue = [Math.random(), Math.random()];
+        const debug = jest.fn();
+        const debugValue = [Math.random(), Math.random()];
+        const logger = { error, warn, info, debug };
 
-      amlg = await getRuntime({ logger });
-      expect(amlg).toBeInstanceOf(Amalgam);
+        amlg = await getRuntime({ logger });
+        expect(amlg).toBeInstanceOf(Amalgam);
 
-      amlg.logger.error(errorValue);
-      amlg.logger.warn(warnValue);
-      amlg.logger.info(infoValue);
-      amlg.logger.debug(debugValue);
-      expect(error).toHaveBeenCalledWith(errorValue);
-      expect(warn).toHaveBeenCalledWith(warnValue);
-      expect(info).toHaveBeenCalledWith(infoValue);
-      expect(debug).toHaveBeenCalledWith(debugValue);
+        amlg.logger.error(errorValue);
+        amlg.logger.warn(warnValue);
+        amlg.logger.info(infoValue);
+        amlg.logger.debug(debugValue);
+        expect(error).toHaveBeenCalledWith(errorValue);
+        expect(warn).toHaveBeenCalledWith(warnValue);
+        expect(info).toHaveBeenCalledWith(infoValue);
+        expect(debug).toHaveBeenCalledWith(debugValue);
+      });
     });
 
     describe("trace", () => {
