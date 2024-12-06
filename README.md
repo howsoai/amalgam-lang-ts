@@ -2,7 +2,7 @@
 
 Provides a package around [@howso/amalgam](https://github.com/howsoai/amalgam) releases.
 
-Amalgam version: [55.1.1](https://github.com/howsoai/amalgam/releases/tag/55.1.1)
+Amalgam version: [57.0.7](https://github.com/howsoai/amalgam/releases/tag/57.0.7)
 
 ## Usage
 
