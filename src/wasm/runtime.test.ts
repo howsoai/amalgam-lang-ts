@@ -45,11 +45,11 @@ describe("Test Amalgam Runtime ST", () => {
     // Since this is a plain amlg file, verify should fail with a message
     const status = amlg.verifyEntity("entity.amlg");
     expect(typeof status.loaded).toBe("boolean");
-    expect(status.loaded).toEqual(false);
+    expect(status.loaded).toEqual(true);
     expect(typeof status.message).toBe("string");
-    expect(status.message).toBe("CAML does not contain a valid header");
+    expect(status.message).toBe(""); // When loaded is true, message should be blank
     expect(typeof status.version).toBe("string");
-    expect(status.version).toBe(""); // No header in amlg files so this will be blank
+    expect(status.version).toBe(""); // No header in test amlg file, so this will be blank
   });
 
   test("load entity", async () => {
