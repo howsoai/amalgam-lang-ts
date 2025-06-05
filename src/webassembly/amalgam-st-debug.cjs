@@ -28,7 +28,7 @@ var readyPromise = new Promise((resolve, reject) => {
   readyPromiseResolve = resolve;
   readyPromiseReject = reject;
 });
-["_malloc","_free","_LoadEntity","_CloneEntity","_VerifyEntity","_StoreEntity","_ExecuteEntity","_ExecuteEntityJsonPtr","_DestroyEntity","_GetEntities","_SetRandomSeed","_SetJSONToLabel","_GetJSONPtrFromLabel","_SetSBFDataStoreEnabled","_IsSBFDataStoreEnabled","_GetVersionString","_SetMaxNumThreads","_GetMaxNumThreads","_GetConcurrencyTypeString","_DeleteString","_memory","___indirect_function_table","___set_stack_limits","onRuntimeInitialized"].forEach((prop) => {
+["_malloc","_free","_LoadEntity","_CloneEntity","_VerifyEntity","_StoreEntity","_ExecuteEntity","_ExecuteEntityJsonPtr","_DestroyEntity","_GetEntities","_SetRandomSeed","_SetJSONToLabel","_GetJSONPtrFromLabel","_SetSBFDataStoreEnabled","_IsSBFDataStoreEnabled","_GetVersionString","_SetMaxNumThreads","_GetMaxNumThreads","_GetConcurrencyTypeString","_DeleteString","_GetEntityPermissions","_SetEntityPermissions","_memory","___indirect_function_table","___set_stack_limits","onRuntimeInitialized"].forEach((prop) => {
   if (!Object.getOwnPropertyDescriptor(readyPromise, prop)) {
     Object.defineProperty(readyPromise, prop, {
       get: () => abort('You are getting ' + prop + ' on the Promise object, instead of the instance. Use .then() to get called back with the instance, see the MODULARIZE docs in src/settings.js'),
@@ -62,7 +62,7 @@ if (ENVIRONMENT_IS_NODE) {
 
 // --pre-jses are emitted after the Module integration code, so that they can
 // refer to Module (if they choose; they can also define Module)
-// include: /tmp/tmpqcgtrmbo.js
+// include: /tmp/tmpvz0_2xvu.js
 
   if (!Module['expectedDataFileDownloads']) {
     Module['expectedDataFileDownloads'] = 0;
@@ -244,21 +244,21 @@ Module['FS_createPath']("/", "tzdata", true, true);
 
   })();
 
-// end include: /tmp/tmpqcgtrmbo.js
-// include: /tmp/tmply2nhvpm.js
+// end include: /tmp/tmpvz0_2xvu.js
+// include: /tmp/tmpdylnx__5.js
 
     // All the pre-js content up to here must remain later on, we need to run
     // it.
     if (Module['$ww'] || (typeof ENVIRONMENT_IS_PTHREAD != 'undefined' && ENVIRONMENT_IS_PTHREAD)) Module['preRun'] = [];
     var necessaryPreJSTasks = Module['preRun'].slice();
-  // end include: /tmp/tmply2nhvpm.js
-// include: /tmp/tmph56ggxf0.js
+  // end include: /tmp/tmpdylnx__5.js
+// include: /tmp/tmp05kzh1k0.js
 
     if (!Module['preRun']) throw 'Module.preRun should exist because file support used it; did a pre-js delete it?';
     necessaryPreJSTasks.forEach((task) => {
       if (Module['preRun'].indexOf(task) < 0) throw 'All preRun tasks that exist before user pre-js code should remain after; did you replace Module or modify Module.preRun?';
     });
-  // end include: /tmp/tmph56ggxf0.js
+  // end include: /tmp/tmp05kzh1k0.js
 
 
 // Sometimes an existing Module object exists with properties
@@ -5152,6 +5152,8 @@ var ___wasm_call_ctors = createExportWrapper('__wasm_call_ctors', 0);
 var _free = Module['_free'] = createExportWrapper('free', 1);
 var _LoadEntity = Module['_LoadEntity'] = createExportWrapper('LoadEntity', 8);
 var _VerifyEntity = Module['_VerifyEntity'] = createExportWrapper('VerifyEntity', 2);
+var _GetEntityPermissions = Module['_GetEntityPermissions'] = createExportWrapper('GetEntityPermissions', 1);
+var _SetEntityPermissions = Module['_SetEntityPermissions'] = createExportWrapper('SetEntityPermissions', 2);
 var _CloneEntity = Module['_CloneEntity'] = createExportWrapper('CloneEntity', 8);
 var _StoreEntity = Module['_StoreEntity'] = createExportWrapper('StoreEntity', 5);
 var _SetJSONToLabel = Module['_SetJSONToLabel'] = createExportWrapper('SetJSONToLabel', 3);
