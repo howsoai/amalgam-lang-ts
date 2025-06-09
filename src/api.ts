@@ -35,6 +35,8 @@ export interface AmalgamModule {
   getVersion(): string;
   setMaxNumThreads(threads: number): void;
   getMaxNumThreads(): number;
+  setEntityPermissions(handle: string, jsonPermissions: string): boolean;
+  getEntityPermissions(handle: string): string;
   getConcurrencyType(): string;
 }
 
@@ -99,6 +101,23 @@ export type CloneEntityOptions = Partial<EntityFileOptions> & {
   writeLog?: string;
   /** File path for writing a print log. */
   printLog?: string;
+};
+
+export type EntityPermissions = {
+  /* Allow standard output and error streams. */
+  std_out_and_std_err?: boolean;
+  /* Allow standard input stream. */
+  std_in?: boolean;
+  /* Allow loading from file system. */
+  load?: boolean;
+  /* Allow storing to file system. */
+  store?: boolean;
+  /* Allow access to environment. */
+  environment?: boolean;
+  /* Allow altering runtime resources. */
+  alter_performance?: boolean;
+  /* Allows running system commands. */
+  system?: boolean;
 };
 
 export class Amalgam<T extends AmalgamModule = AmalgamModule> {
@@ -230,9 +249,10 @@ export class Amalgam<T extends AmalgamModule = AmalgamModule> {
     this.trace.logCommand("EXECUTE_ENTITY_JSON", handle, label, payload);
     const result = this.runtime.executeEntityJson(handle, label, JSON.stringify(payload));
     this.trace.logTime("EXECUTION STOP");
-    this.trace.logReply(result);
-    if (!result) return null;
-    return JSON.parse(result);
+
+    const response = result ? JSON.parse(result) : null;
+    this.trace.logReply(response);
+    return response;
   }
 
   /**
@@ -240,7 +260,7 @@ export class Amalgam<T extends AmalgamModule = AmalgamModule> {
    * @param handle The entity handle.
    */
   public destroyEntity(handle: string): void {
-    this.trace.logComment("CALL > DestroyEntity");
+    this.trace.logCommand("DESTROY_ENTITY", handle);
     this.runtime.destroyEntity(handle);
   }
 
@@ -287,9 +307,9 @@ export class Amalgam<T extends AmalgamModule = AmalgamModule> {
   public getJsonFromLabel<R = unknown>(handle: string, label: string): R | null {
     this.trace.logCommand("GET_JSON_FROM_LABEL", handle, label);
     const result = this.runtime.getJsonFromLabel(handle, label);
-    this.trace.logReply(result);
-    if (!result) return null;
-    return JSON.parse(result);
+    const response = result ? JSON.parse(result) : null;
+    this.trace.logReply(response);
+    return response;
   }
 
   /**
@@ -330,6 +350,33 @@ export class Amalgam<T extends AmalgamModule = AmalgamModule> {
    */
   public getConcurrencyType(): string {
     return this.runtime.getConcurrencyType();
+  }
+
+  /**
+   * Set the permissions of an entity.
+   * @param handle The entity handle.
+   * @param permissions The permission flags.
+   * @returns True if the permissions were updated successfully.
+   */
+  public setEntityPermissions(handle: string, permissions: EntityPermissions): boolean {
+    const payload = permissions ?? null;
+    this.trace.logCommand("SET_ENTITY_PERMISSIONS", handle, payload);
+    const result = this.runtime.setEntityPermissions(handle, JSON.stringify(payload));
+    this.trace.logReply(result);
+    return result;
+  }
+
+  /**
+   * Get the permissions of an entity.
+   * @param handle The entity handle.
+   * @returns The entity permission flags.
+   */
+  public getEntityPermissions(handle: string): EntityPermissions {
+    this.trace.logCommand("GET_ENTITY_PERMISSIONS", handle);
+    const result = this.runtime.getEntityPermissions(handle);
+    const response = result ? JSON.parse(result) : {};
+    this.trace.logReply(response);
+    return response;
   }
 
   /**
