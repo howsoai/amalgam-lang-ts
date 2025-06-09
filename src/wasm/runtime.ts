@@ -192,6 +192,12 @@ function assignRuntimeMethods(amlg: AmalgamEmscriptenModule) {
   amlg.setMaxNumThreads = amlg.cwrap("SetMaxNumThreads", null, ["number"]);
   amlg.getMaxNumThreads = amlg.cwrap("GetMaxNumThreads", "number", []);
 
+  amlg.setEntityPermissions = amlg.cwrap("SetEntityPermissions", "boolean", ["string", "string"]);
+  amlg.getEntityPermissions = function (...args) {
+    const ptr = amlg.ccall("GetEntityPermissions", "number", ["string"], args);
+    return amlg.pointerToString(ptr);
+  };
+
   amlg.getVersion = function () {
     const ptr = amlg.ccall("GetVersionString", "number", [], []);
     return amlg.pointerToString(ptr);

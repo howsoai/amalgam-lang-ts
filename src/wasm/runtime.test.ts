@@ -178,4 +178,51 @@ describe("Test Amalgam Runtime ST", () => {
     expect(typeof value).toBe("number");
     expect(value).toEqual(1);
   });
+
+  test("entity permissions", async () => {
+    // Test setting and getting entity permissions
+    const handle = "permissions_test";
+    try {
+      const status = amlg.loadEntity({ handle: handle, filePath: "entity.amlg" });
+      expect(status.loaded).toEqual(true);
+
+      const initial_perms = amlg.getEntityPermissions(handle);
+      expect(initial_perms).not.toBe(null);
+      expect(initial_perms.load).toBe(false);
+      expect(initial_perms.store).toBe(false);
+      expect(initial_perms.system).toBe(false);
+      expect(initial_perms.environment).toBe(false);
+
+      const is_set = amlg.setEntityPermissions(handle, { load: true, store: true, system: false });
+      expect(is_set).toBe(true);
+
+      const updated_perms = amlg.getEntityPermissions(handle);
+      expect(updated_perms.load).toBe(true);
+      expect(updated_perms.store).toBe(true);
+      expect(updated_perms.system).toBe(false);
+      expect(updated_perms.environment).toBe(false);
+    } finally {
+      // cleanup loaded entity
+      amlg.destroyEntity(handle);
+    }
+  });
+
+  test("execute json", async () => {
+    // Test executing an entity label
+    const handle = "execute_json_test";
+    try {
+      const status = amlg.loadEntity({ handle: handle, filePath: "entity.amlg" });
+      expect(status.loaded).toEqual(true);
+
+      const value = "this is a test";
+      const result = amlg.executeEntityJson<{ foo?: string }, { foo: string }>(handle, "echo", { foo: value });
+      expect(result?.foo).toBe(value);
+
+      const result2 = amlg.executeEntityJson<{ foo?: string }, { foo: string }>(handle, "echo", {});
+      expect(result2?.foo).toBe("bar");
+    } finally {
+      // cleanup loaded entity
+      amlg.destroyEntity(handle);
+    }
+  });
 });
