@@ -63,7 +63,7 @@ function assignRuntimeMethods(amlg: AmalgamEmscriptenModule) {
 
   amlg.stringToPointer = function (value: string): bigint {
     // Convert UTF-8 string to pointer
-    const n = amlg.lengthBytesUTF8(value) + 1;
+    const n = amlg.lengthBytesUTF8(value) + 1; // add 1 for terminator
     const ptr = amlg._malloc(n);
     amlg.stringToUTF8(value, ptr, n);
     return BigInt(ptr);
@@ -76,7 +76,7 @@ function assignRuntimeMethods(amlg: AmalgamEmscriptenModule) {
     }
     if (values.length == 0) {
       // Allocate empty array
-      const basePtr = BigInt(amlg._malloc(8));
+      const basePtr = BigInt(amlg._malloc(0));
       const free = () => {
         amlg._free(basePtr as unknown as number);
       };

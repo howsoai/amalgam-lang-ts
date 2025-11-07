@@ -91,11 +91,14 @@ describe("Test Amalgam Runtime ST", () => {
       expect(entities).toEqual([handle]);
 
       // store the child entity
+      amlg.storeEntity({ handle, filePath: "stored_parent.amlg" });
       amlg.storeEntity({ handle, filePath: "stored_child.amlg", entityPath });
       const files = amlg.runtime.FS.readdir("/");
       expect(files).toContain("stored_child.amlg");
-      const fileContent = amlg.runtime.FS.readFile("stored_child.amlg", { encoding: "utf8" });
-      expect(fileContent).toContain("#is_child (true)");
+      const parentFileContent = amlg.runtime.FS.readFile("stored_parent.amlg", { encoding: "utf8" });
+      expect(parentFileContent).toContain("#is_parent (true)");
+      const childFileContent = amlg.runtime.FS.readFile("stored_child.amlg", { encoding: "utf8" });
+      expect(childFileContent).toContain("#is_child (true)");
     } finally {
       // cleanup loaded entity
       amlg.destroyEntity(handle);
