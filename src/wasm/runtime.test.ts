@@ -38,6 +38,8 @@ describe("Test Amalgam Runtime ST", () => {
     // Prepare amalgam entity test file in virtual filesystem at root
     const entity = fs.readFileSync(path.resolve(TESTS_DIR, "entity.amlg"));
     amlg.runtime.FS.createDataFile("", "entity.amlg", entity, true, false, false);
+    const childEntity = fs.readFileSync(path.resolve(TESTS_DIR, "child.amlg"));
+    amlg.runtime.FS.createDataFile("", "child.amlg", childEntity, true, false, false);
   });
 
   test("verify entity", async () => {
@@ -64,6 +66,42 @@ describe("Test Amalgam Runtime ST", () => {
     } finally {
       // cleanup loaded entity
       amlg.destroyEntity("load_test");
+    }
+  });
+
+  test("load-store sub-entity", async () => {
+    // Test load and store of a sub-entity
+    const handle = "load_store_sub_entity";
+    const entityPath = ["child"];
+    try {
+      const parentStatus = amlg.loadEntity({ handle, filePath: "entity.amlg" });
+      expect(typeof parentStatus.loaded).toBe("boolean");
+      expect(parentStatus.loaded).toEqual(true);
+      expect(parentStatus.entityPath).toEqual([]);
+
+      // load the child entity
+      const childStatus = amlg.loadEntity({ handle, filePath: "child.amlg", entityPath });
+      expect(typeof childStatus.loaded).toBe("boolean");
+      expect(childStatus.loaded).toEqual(true);
+      expect(Array.isArray(childStatus.entityPath)).toBe(true);
+      expect(childStatus.entityPath).toEqual(entityPath);
+
+      // check child is not a top level entity
+      const entities = amlg.getEntities();
+      expect(entities).toEqual([handle]);
+
+      // store the child entity
+      amlg.storeEntity({ handle, filePath: "stored_parent.amlg" });
+      amlg.storeEntity({ handle, filePath: "stored_child.amlg", entityPath });
+      const files = amlg.runtime.FS.readdir("/");
+      expect(files).toContain("stored_child.amlg");
+      const parentFileContent = amlg.runtime.FS.readFile("stored_parent.amlg", { encoding: "utf8" });
+      expect(parentFileContent).toContain("#is_parent (true)");
+      const childFileContent = amlg.runtime.FS.readFile("stored_child.amlg", { encoding: "utf8" });
+      expect(childFileContent).toContain("#is_child (true)");
+    } finally {
+      // cleanup loaded entity
+      amlg.destroyEntity(handle);
     }
   });
 
@@ -95,6 +133,8 @@ describe("Test Amalgam Runtime ST", () => {
       const files = amlg.runtime.FS.readdir("/");
       expect(files).toContain("entity.amlg");
       expect(files).toContain("new_entity.amlg");
+      const fileContent = amlg.runtime.FS.readFile("new_entity.amlg", { encoding: "utf8" });
+      expect(fileContent).toContain(";Simple Amalgam entity");
     } finally {
       // cleanup loaded entities
       amlg.destroyEntity("store_test");

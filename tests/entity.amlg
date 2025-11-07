@@ -1,5 +1,6 @@
 ;Simple Amalgam entity to use in unit tests
 (null
+	#is_parent (true)
 	#test_number 1
 	#test_string "abc123"
 	#test_list

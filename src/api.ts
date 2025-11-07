@@ -10,6 +10,7 @@ export interface AmalgamModule {
     fileParams: string,
     writeLog: string,
     printLog: string,
+    entityPath: string[] | null,
   ): EntityStatus;
   cloneEntity(
     handle: string,
@@ -22,7 +23,14 @@ export interface AmalgamModule {
     printLog: string,
   ): boolean;
   verifyEntity(filePath: string): EntityStatus;
-  storeEntity(handle: string, filePath: string, fileType: string, persistent: boolean, fileParams: string): void;
+  storeEntity(
+    handle: string,
+    filePath: string,
+    fileType: string,
+    persistent: boolean,
+    fileParams: string,
+    entityPath: string[] | null,
+  ): void;
   executeEntity(handle: string, label: string): void;
   executeEntityJson(handle: string, label: string, json: string): string;
   destroyEntity(handle: string): void;
@@ -44,6 +52,7 @@ export interface EntityStatus {
   loaded: boolean;
   message: string;
   version: string;
+  entityPath: string[];
 }
 
 export interface AmalgamOptions {
@@ -83,12 +92,16 @@ export type LoadEntityOptions = EntityFileOptions & {
   writeLog?: string;
   /** File path for writing a print log. */
   printLog?: string;
+  /** Entity path to the sub-entity for hierarchial entities. */
+  entityPath?: string[] | null;
 };
 
 /** Parameters for storeEntity. */
 export type StoreEntityOptions = EntityFileOptions & {
   /** The entity handle. */
   handle: string;
+  /** Entity path to the sub-entity for hierarchial entities. */
+  entityPath?: string[] | null;
 };
 
 /** Parameters for cloneEntity. */
@@ -154,10 +167,37 @@ export class Amalgam<T extends AmalgamModule = AmalgamModule> {
    * @returns True if the entity was loaded successfully.
    */
   public loadEntity(options: LoadEntityOptions): EntityStatus {
-    const { handle, filePath, fileType = "", persistent = false, writeLog = "", printLog = "" } = options;
+    const {
+      handle,
+      filePath,
+      fileType = "",
+      persistent = false,
+      writeLog = "",
+      printLog = "",
+      entityPath = null,
+    } = options;
     const fileParams = this.serializeParams(options.fileParams);
-    this.trace.logCommand("LOAD_ENTITY", handle, filePath, fileType, persistent, fileParams, writeLog, printLog);
-    const result = this.runtime.loadEntity(handle, filePath, fileType, persistent, fileParams, writeLog, printLog);
+    this.trace.logCommand(
+      "LOAD_ENTITY",
+      handle,
+      filePath,
+      fileType,
+      persistent,
+      fileParams,
+      writeLog,
+      printLog,
+      entityPath ? entityPath.join(" ") : "",
+    );
+    const result = this.runtime.loadEntity(
+      handle,
+      filePath,
+      fileType,
+      persistent,
+      fileParams,
+      writeLog,
+      printLog,
+      entityPath,
+    );
     this.trace.logReply(result);
     return result;
   }
@@ -220,10 +260,18 @@ export class Amalgam<T extends AmalgamModule = AmalgamModule> {
    * @param options The store parameters.
    */
   public storeEntity(options: StoreEntityOptions): void {
-    const { handle, filePath, fileType = "", persistent = false } = options;
+    const { handle, filePath, fileType = "", persistent = false, entityPath = null } = options;
     const fileParams = this.serializeParams(options.fileParams);
-    this.trace.logCommand("STORE_ENTITY", handle, filePath, fileType, persistent, fileParams);
-    this.runtime.storeEntity(handle, filePath, fileType, persistent, fileParams);
+    this.trace.logCommand(
+      "STORE_ENTITY",
+      handle,
+      filePath,
+      fileType,
+      persistent,
+      fileParams,
+      entityPath ? entityPath.join(" ") : "",
+    );
+    this.runtime.storeEntity(handle, filePath, fileType, persistent, fileParams, entityPath);
   }
 
   /**
