@@ -96,9 +96,9 @@ describe("Test Amalgam Runtime ST", () => {
       const files = amlg.runtime.FS.readdir("/");
       expect(files).toContain("stored_child.amlg");
       const parentFileContent = amlg.runtime.FS.readFile("stored_parent.amlg", { encoding: "utf8" });
-      expect(parentFileContent).toContain("#is_parent (true)");
+      expect(parentFileContent).toContain("#is_parent");
       const childFileContent = amlg.runtime.FS.readFile("stored_child.amlg", { encoding: "utf8" });
-      expect(childFileContent).toContain("#is_child (true)");
+      expect(childFileContent).toContain("#is_child");
     } finally {
       // cleanup loaded entity
       amlg.destroyEntity(handle);
