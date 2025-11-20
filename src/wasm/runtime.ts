@@ -232,12 +232,12 @@ function assignRuntimeMethods(amlg: AmalgamEmscriptenModule) {
     persistent: boolean,
     fileParams: string,
     entityPath: string[] | null,
-  ): void {
+  ): boolean {
     const { basePtr: entityPathPtr, size: entityPathLen, free: freeEntityPath } = amlg.allocCharPtrArray(entityPath);
     try {
-      amlg.ccall(
+      return amlg.ccall(
         "StoreEntity",
-        null,
+        "boolean",
         [
           "string", // handle
           "string", // path

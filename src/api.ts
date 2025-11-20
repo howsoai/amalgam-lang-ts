@@ -30,7 +30,7 @@ export interface AmalgamModule {
     persistent: boolean,
     fileParams: string,
     entityPath: string[] | null,
-  ): void;
+  ): boolean;
   executeEntity(handle: string, label: string): void;
   executeEntityJson(handle: string, label: string, json: string): string;
   destroyEntity(handle: string): void;
@@ -259,7 +259,7 @@ export class Amalgam<T extends AmalgamModule = AmalgamModule> {
    * Store an entity to file.
    * @param options The store parameters.
    */
-  public storeEntity(options: StoreEntityOptions): void {
+  public storeEntity(options: StoreEntityOptions): boolean {
     const { handle, filePath, fileType = "", persistent = false, entityPath = null } = options;
     const fileParams = this.serializeParams(options.fileParams);
     this.trace.logCommand(
@@ -271,7 +271,7 @@ export class Amalgam<T extends AmalgamModule = AmalgamModule> {
       fileParams,
       entityPath ? entityPath.join(" ") : "",
     );
-    this.runtime.storeEntity(handle, filePath, fileType, persistent, fileParams, entityPath);
+    return this.runtime.storeEntity(handle, filePath, fileType, persistent, fileParams, entityPath);
   }
 
   /**

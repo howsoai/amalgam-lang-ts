@@ -129,7 +129,8 @@ describe("Test Amalgam Runtime ST", () => {
     try {
       const status1 = amlg.loadEntity({ handle: "store_test", filePath: "entity.amlg" });
       expect(status1.loaded).toEqual(true);
-      amlg.storeEntity({ handle: "store_test", filePath: "new_entity.amlg" });
+      const status = amlg.storeEntity({ handle: "store_test", filePath: "new_entity.amlg" });
+      expect(status).toBe(true);
       const files = amlg.runtime.FS.readdir("/");
       expect(files).toContain("entity.amlg");
       expect(files).toContain("new_entity.amlg");
