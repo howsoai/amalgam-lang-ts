@@ -1,11 +1,11 @@
 ;Simple Amalgam entity to use in unit tests
-(null
-	#is_parent .true
-	#test_number 1
-	#test_string "abc123"
-	#test_list
+(assoc
+	is_parent .true
+	test_number 1
+	test_string "abc123"
+	test_list
 		(list 	1 	.7  "A")
-	#echo
+	echo
 		(declare
 			;input params
 			(assoc

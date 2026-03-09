@@ -1,4 +1,4 @@
 ;Simple Amalgam entity to use in hierarchy tests
-(null
-	#is_child .true
+(assoc
+	is_child .true
 )
