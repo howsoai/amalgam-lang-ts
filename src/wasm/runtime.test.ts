@@ -200,10 +200,11 @@ describe("Test Amalgam Runtime ST", () => {
   });
 
   test("get version", async () => {
-    // Test version is valid semver value
+    const metadata = JSON.parse(fs.readFileSync(path.resolve(AMALGAM_WASM_DIR, "version.json"), "utf8"));
     const version = amlg.getVersion();
     expect(typeof version).toBe("string");
     expect(server.valid(version)).not.toBeNull();
+    expect(version).toEqual(metadata.dependencies.amalgam);
   });
 
   test("get concurrency type", async () => {
