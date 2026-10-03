@@ -62,7 +62,7 @@ if (ENVIRONMENT_IS_NODE) {
 
 // --pre-jses are emitted after the Module integration code, so that they can
 // refer to Module (if they choose; they can also define Module)
-// include: /tmp/tmpx0z22krz.js
+// include: /tmp/tmpl3a5uqz9.js
 
   if (!Module['expectedDataFileDownloads']) {
     Module['expectedDataFileDownloads'] = 0;
@@ -244,21 +244,21 @@ Module['FS_createPath']("/", "tzdata", true, true);
 
   })();
 
-// end include: /tmp/tmpx0z22krz.js
-// include: /tmp/tmpog3y33sk.js
+// end include: /tmp/tmpl3a5uqz9.js
+// include: /tmp/tmpwjo8sotf.js
 
     // All the pre-js content up to here must remain later on, we need to run
     // it.
     if (Module['$ww'] || (typeof ENVIRONMENT_IS_PTHREAD != 'undefined' && ENVIRONMENT_IS_PTHREAD)) Module['preRun'] = [];
     var necessaryPreJSTasks = Module['preRun'].slice();
-  // end include: /tmp/tmpog3y33sk.js
-// include: /tmp/tmp18jw4l1o.js
+  // end include: /tmp/tmpwjo8sotf.js
+// include: /tmp/tmp5gon4oqe.js
 
     if (!Module['preRun']) throw 'Module.preRun should exist because file support used it; did a pre-js delete it?';
     necessaryPreJSTasks.forEach((task) => {
       if (Module['preRun'].indexOf(task) < 0) throw 'All preRun tasks that exist before user pre-js code should remain after; did you replace Module or modify Module.preRun?';
     });
-  // end include: /tmp/tmp18jw4l1o.js
+  // end include: /tmp/tmp5gon4oqe.js
 
 
 // Sometimes an existing Module object exists with properties
@@ -5169,11 +5169,11 @@ var _ExecuteEntity = Module['_ExecuteEntity'] = createExportWrapper('ExecuteEnti
 var _DestroyEntity = Module['_DestroyEntity'] = createExportWrapper('DestroyEntity', 1);
 var _SetRandomSeed = Module['_SetRandomSeed'] = createExportWrapper('SetRandomSeed', 2);
 var _GetEntities = Module['_GetEntities'] = createExportWrapper('GetEntities', 1);
-var _DeleteString = Module['_DeleteString'] = createExportWrapper('DeleteString', 1);
 var _SetSBFDataStoreEnabled = Module['_SetSBFDataStoreEnabled'] = createExportWrapper('SetSBFDataStoreEnabled', 1);
 var _IsSBFDataStoreEnabled = Module['_IsSBFDataStoreEnabled'] = createExportWrapper('IsSBFDataStoreEnabled', 0);
 var _GetMaxNumThreads = Module['_GetMaxNumThreads'] = createExportWrapper('GetMaxNumThreads', 0);
 var _SetMaxNumThreads = Module['_SetMaxNumThreads'] = createExportWrapper('SetMaxNumThreads', 1);
+var _DeleteString = Module['_DeleteString'] = createExportWrapper('DeleteString', 1);
 var _fflush = createExportWrapper('fflush', 1);
 var _malloc = Module['_malloc'] = createExportWrapper('malloc', 1);
 var _main = createExportWrapper('__main_argc_argv', 2);
